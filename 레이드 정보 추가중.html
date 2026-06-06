@@ -210,6 +210,12 @@
             .vindic-container { grid-template-columns: 1fr; }
             .block-span-4, .block-span-2 { grid-column: span 1; }
         }
+
+        /* 던전별 레이드 상한 테이블 행 호버 효과 (빈 행 제외) */
+        table tbody tr:not(.empty-row):hover {
+            background-color: rgba(128, 128, 128, 0.15); /* 반투명한 회색으로 살짝 강조 */
+            transition: background-color 0.2s ease-in-out; /* 부드럽게 색이 변하도록 애니메이션 추가 */
+        }
     </style>
 </head>
 <body data-theme="light">
