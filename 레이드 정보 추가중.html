@@ -190,8 +190,12 @@
         .inside-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: center; }
         .inside-table th, .inside-table td { padding: 8px 4px; border-bottom: 1px solid var(--border-color); color: var(--text-color); white-space: nowrap; }
         .inside-table th { background-color: var(--link-bg); font-weight: bold; }
+        
+        /* 테이블 행 마우스 호버 효과 추가 (빈 행인 .empty-row는 제외) */
+        .inside-table tbody tr:not(.empty-row):hover { background-color: rgba(128, 128, 128, 0.08); transition: background-color 0.15s ease; }
 
-        .vindic-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 20px; width: 100%; }
+        /* align-items: start 설정 추가하여 개별 블록들이 각자 고유한 세로폭(높이)을 갖도록 변경 */
+        .vindic-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 20px; width: 100%; align-items: start; }
         .block-span-4 { grid-column: 1 / span 4; }
         .block-span-2 { grid-column: span 2; } 
 
@@ -364,11 +368,16 @@
                 <ul class="link-list">
                     <li class="link-item coupang-link"><a href="https://www.coupang.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupang.com">쿠팡</a></li>
                     <li class="link-item ali-link"><a href="https://ko.aliexpress.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com">알리익스프레스</a></li>
+                    <li class="link-item ali-link"><a href="https://www.aliexpress.com/p/coin-pc-index/index.html" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com">알리익스프레스(출석)</a></li>
+                    <li class="link-item gmarket-link"><a href="https://www.gmarket.co.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓</a></li>
+                    <li class="link-item gmarket-link"><a href="https://www.gmarket.co.kr/e/mth/smilelottery" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓 (복권)</a></li>
+                    <li class="link-item gmarket-link"><a href="https://promotion.gmarket.co.kr/Event/pluszone.asp" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓 (출석)</a></li>
+                    <li class="link-item bithumb-link"><a href="https://feed.bithumb.com/notice?category=8" target="_blank"><img src="https://www.google.com/s2/favicons?domain=bithumb.com">빗썸 (이벤트)</a></li>
                 </ul>
             </div>
 
             <div class="category-box">
-                <div class="category-title">➕ 계산기 (키보드)</div>
+                <div class="category-title"></div>
                 <div class="slim-calc-container"><div id="slim-display">0</div></div>
                 <div style="font-size: 0.7rem; color: #888; text-align: right;">Enter: 결과 | Backspace: 삭제 | Esc: 초기화</div>
             </div>
@@ -423,7 +432,7 @@
             </div>
 
             <div class="category-box block-span-2">
-                <div class="category-title">🎯 던전별 레이드 상한</div>
+                <div class="category-title">🎯 던전별 능력치 상한</div>
                 <div id="raid-table-container" style="overflow-x: auto;">
                     <div style="padding: 20px; text-align: center; color: #888;">데이터를 불러오는 중입니다...</div>
                 </div>
@@ -852,9 +861,7 @@
 
     // --- 구글 스프레드시트 연동 로직 ---
     async function loadRaidData() {
-        // 구글 스프레드시트 문서 ID
         const sheetId = '1PKC6JqBjxjrbihrbexWoldUYRIgBwHuFlQQJU2WN0Lc';
-        // CSV 포맷으로 내보내기 링크
         const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQilQ4RJWDnS6GQjygMpOgHRg3DD13UjVsWZwmqLr5rPrAnlusR_ajf_IPYn5BdFI6MRUVPXbUIdB2m/pub?gid=0&single=true&output=csv`;
 
         try {
@@ -862,7 +869,6 @@
             if (!response.ok) throw new Error('데이터를 불러오지 못했습니다.');
             const csvText = await response.text();
 
-            // 간단한 CSV 파서 (숫자에 들어간 쉼표 "60,120" 등을 처리하기 위함)
             const rows = [];
             let currentRow = [];
             let currentCell = '';
@@ -910,21 +916,19 @@
         
         let html = '<table class="inside-table"><thead><tr>';
         
-        // 원본 첫 행(헤더) 구성
         const headers = rows[0];
         headers.forEach(header => {
             html += `<th>${header.trim()}</th>`;
         });
         html += '</tr></thead><tbody>';
         
-        // 원본 데이터 행 구성
         for (let i = 1; i < rows.length; i++) {
             const row = rows[i];
             const isEmpty = row.every(cell => cell.trim() === '');
             
-            // 비어있는 행 처리
+            // 비어있는 행 처리 변경 (회색 배경 제거, 두께 단축, 호버 예외 클래스 추가)
             if (isEmpty) {
-                html += `<tr><td colspan="${headers.length}" style="height: 28px; background-color: var(--bg-color);"></td></tr>`;
+                html += `<tr class="empty-row"><td colspan="${headers.length}" style="height: 10px; padding: 0; border-bottom: none; background: transparent;"></td></tr>`;
                 continue;
             }
             
@@ -986,7 +990,6 @@
         document.getElementById('selected-date-label').innerText = selectedDateStr;
         renderShadowCitadel();
         
-        // 스프레드시트 데이터 불러오기 실행
         loadRaidData();
     }; 
 </script>
