@@ -119,7 +119,14 @@
         .spellcheck-label:hover { color: var(--text-color) !important; }
         .spellcheck-label:hover input { opacity: 1 !important; }
 
-        @media (max-width: 1200px) { .container { column-count: 2; } }
+        /* 세로로 2칸을 차지하게 만드는 클래스 추가 */
+        .row-span-2 { grid-row: span 2; }
+
+        @media (max-width: 1200px) {
+            .vindic-container { grid-template-columns: 1fr; }
+            .block-span-4, .block-span-2 { grid-column: span 1; }
+            .row-span-2 { grid-row: span 1; } /* 화면이 좁아지면 다시 1칸으로 복구 */
+        }
 
         /* --- 달력 전용 CSS --- */
         .calendar-page-container { 
@@ -433,7 +440,7 @@
                 </div>
             </div>
 
-            <div class="category-box block-span-2">
+            <div class="category-box block-span-2 row-span-2">
                 <div class="category-title">🎯 던전별 능력치 상한</div>
                 <div id="raid-table-container" style="overflow-x: auto;">
                     <div style="padding: 20px; text-align: center; color: #888;">데이터를 불러오는 중입니다...</div>
