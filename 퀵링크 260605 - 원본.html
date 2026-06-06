@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Page</title>
+    <link rel="icon" href="https://www.google.com/favicon.ico">
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+            --text-color: #1a1a1a;
+            --border-color: #e1e4e8;
+            --memo-bg: #fffcf0;
+            --link-bg: #f8f9fa;
+            --search-bg: #f1f3f4;
+            --shadow: rgba(0,0,0,0.08);
+            --accent-color: #007aff;
+            /* 달력 전용 컬러 변수 추가 */
+            --sun-color: #ff4d4f;
+            --sat-color: #1890ff;
+            --other-month-bg: #f5f6f7;
+        }
+
+        [data-theme='dark'] {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --sidebar-bg: #181818;
+            --text-color: #e1e4e8;
+            --border-color: #333333;
+            --memo-bg: #2d2d2e;
+            --link-bg: #2a2a2a;
+            --search-bg: #2a2a2a;
+            --shadow: rgba(0,0,0,0.3);
+            /* 달력 전용 컬러 변수 (다크모드) */
+            --other-month-bg: #1a1a1a;
+        }
+
+        html { overflow-y: scroll; }
+        body {
+            font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            margin: 0;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 70px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; align-items: center; padding-top: 20px;
+            position: fixed; height: 100vh; z-index: 1001; transition: width 0.2s;
+        }
+        .sidebar:hover { width: 120px; }
+        .side-btn {
+            width: 50px; height: 50px; margin-bottom: 15px; border: none; border-radius: 12px;
+            background: var(--border-color); cursor: pointer; display: flex; align-items: center;
+            justify-content: center; flex-direction: column; transition: all 0.2s; color: var(--text-color);
+        }
+        .side-btn span.icon { font-size: 18px; display: block; }
+        .side-btn span.text { font-size: 11px; font-weight: 600; margin-top: 2px; display: none; }
+        .sidebar:hover .side-btn { width: 100px; }
+        .sidebar:hover .side-btn span.text { display: block; }
+        .side-btn.active { background: var(--accent-color); color: white; }
+        .theme-toggle { margin-top: auto; margin-bottom: 30px; background: #3e3e3f; color: #ffca28; }
+
+        /* 메인 콘텐츠 */
+        .main-content { flex: 1; margin-left: 70px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .header-frame { width: 100%; max-width: 1400px; margin-bottom: 15px; }
+        .info-bar {
+            background: var(--card-bg); border-radius: 12px; padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 12px var(--shadow); border: 1px solid var(--border-color);
+        }
+        .search-group { display: flex; gap: 10px; }
+        .search-box { display: flex; border-radius: 24px; padding: 2px 10px; align-items: center; width: 220px; background: var(--search-bg); }
+        .search-input { flex: 1; border: none; outline: none; padding: 6px; font-size: 0.85rem; background: transparent; color: var(--text-color); }
+
+        .tab-content { display: none; width: 100%; max-width: 1400px; }
+        .tab-content.active { display: block; }
+        .container { column-count: 4; column-gap: 20px; width: 100%; }
+
+        .category-box {
+            background: var(--card-bg); border-radius: 12px; padding: 18px;
+            box-shadow: 0 4px 12px var(--shadow); border: 1px solid var(--border-color);
+            display: inline-block; width: 100%; box-sizing: border-box; margin-bottom: 20px; break-inside: avoid;
+        }
+        .category-title { font-size: 1.05rem; font-weight: bold; margin-bottom: 12px; border-bottom: 2px solid var(--bg-color); padding-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+        .ma-checkbox-group { display: flex; gap: 20px; justify-content: flex-end; align-items: center; }
+        .ma-checkbox { cursor: pointer; width: 13px; height: 13px; margin: 0; }
+        .ma-checkbox.idx-0 { accent-color: #ff4d4f; }
+        .ma-checkbox.idx-1 { accent-color: #1890ff; }
+        .ma-checkbox.idx-2 { accent-color: #389e0d; }
+
+        .queue-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
+        .queue-item span.done { text-decoration: line-through; opacity: 0.4; color: #888; transition: all 0.2s; }
+
+        .slim-calc-container { background: #222; color: #0f0; padding: 10px; border-radius: 8px; margin-bottom: 5px; text-align: right; font-family: monospace; font-size: 1.2rem; min-height: 1.5rem; overflow: hidden; }
+
+        .heroes-link a { background-color: #f4fce3 !important; border: 1px solid #82c91e !important; }
+        [data-theme='dark'] .heroes-link a { background-color: #232b16 !important; border-color: #a9e34b !important; }
+
+        .custom-input { width: 100%; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; background: var(--bg-color); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px; outline: none; font-size: 0.85rem; }
+        .add-btn { width: 100%; padding: 8px; background: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 10px; }
+        .link-list { list-style: none; padding: 0; margin: 0; }
+        .link-list.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 5px; row-gap: 0px; }
+        .link-item { display: flex; align-items: center; margin-bottom: 5px; }
+        .link-item a { flex: 1; text-decoration: none; color: var(--text-color); display: flex; align-items: center; padding: 7px 10px; border-radius: 8px; background: var(--link-bg); font-size: 0.9rem; transition: 0.2s; }
+        .link-item img { width: 16px; height: 16px; margin-right: 10px; }
+        .link-item a:hover { background: #007aff22; transform: translateX(5px); }
+        .del-btn { margin-left: 5px; color: #ff4d4f; border: none; background: none; cursor: pointer; font-weight: bold; opacity: 0.2; }
+        .link-item:hover .del-btn, .queue-item:hover .del-btn { opacity: 1; }
+
+        .memo-area { width: 100%; height: calc(100vh - 250px); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; font-size: 1rem; background: var(--memo-bg); color: var(--text-color); resize: none; outline: none; box-sizing: border-box; font-family: inherit; }
+        .save-status { font-size: 0.8rem; color: #888; margin-top: 10px; text-align: right; }
+        .spellcheck-label input { opacity: 0.3 !important; transition: opacity 0.2s; }
+        .spellcheck-label:hover { color: var(--text-color) !important; }
+        .spellcheck-label:hover input { opacity: 1 !important; }
+
+        @media (max-width: 1200px) { .container { column-count: 2; } }
+
+        /* --- 달력 전용 CSS --- */
+        .calendar-page-container { 
+            display: flex; gap: 20px; width: 100%; 
+            height: calc(100vh - 137px); 
+            min-height: 600px;
+        }
+        .calendar-main { 
+            flex: 7; background: var(--card-bg); border-radius: 12px; padding: 15px; 
+            border: 1px solid var(--border-color); box-shadow: 0 4px 12px var(--shadow); 
+            display: flex; flex-direction: column; 
+        }
+        .calendar-side { 
+            flex: 3; background: var(--card-bg); border-radius: 12px; padding: 20px; 
+            border: 1px solid var(--border-color); box-shadow: 0 4px 12px var(--shadow); 
+            display: flex; flex-direction: column; 
+        }
+        .calendar-header { display: flex; justify-content: center; align-items: center; margin-bottom: 15px; position: relative; gap: 10px; }
+        .cal-nav { 
+            background: var(--link-bg); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; 
+            padding: 0 16px; color: var(--text-color); font-size: 0.95rem; font-weight: 500; display: flex; 
+            align-items: center; justify-content: center; transition: 0.2s; min-height: 42px; min-width: 60px; 
+        }
+        .cal-nav:hover { background: var(--border-color); }
+        .cal-nav svg { width: 20px; height: 20px; fill: currentColor; }
+        .cal-title-wrapper { display: flex; align-items: center; gap: 6px; margin: 0 15px; }
+        .calendar-header h2 { margin: 0; font-size: 1.5rem; min-width: 150px; text-align: center; }
+        .tri-btn { background: none; border: none; cursor: pointer; color: var(--text-color); display: flex; align-items: center; padding: 4px; opacity: 0.8; transition: 0.2s; }
+        .tri-btn:hover { opacity: 1; color: var(--accent-color); }
+        .tri-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        #quick-picker { 
+            display: none; position: absolute; top: 55px; left: 50%; transform: translateX(-50%); 
+            background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; 
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 100; gap: 10px; align-items: center;
+        }
+
+        .calendar-grid { 
+            display: grid; grid-template-columns: repeat(7, 1fr); 
+            grid-template-rows: 40px repeat(6, minmax(0, 1fr)); 
+            flex: 1; border-top: 1px solid var(--border-color); border-left: 1px solid var(--border-color);
+        }
+        .cal-day-head { background: var(--link-bg); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.85rem; border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .cal-day-head.sun { color: var(--sun-color); }
+        .cal-day-head.sat { color: var(--sat-color); }
+        
+        .cal-day { 
+            background: var(--card-bg); padding: 8px; border-right: 1px solid var(--border-color); 
+            border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; 
+            flex-direction: column; position: relative; min-height: 0; 
+            overflow: hidden; 
+        }
+        .cal-day:hover { background: rgba(0,0,0,0.02); }
+        .cal-day.active { outline: 2px solid var(--accent-color); outline-offset: -2px; z-index: 10; }
+        .cal-day.today { background: #007aff08; }
+        .cal-day.other-month { background-color: var(--other-month-bg); }
+        .cal-day.other-month .num { opacity: 0.3; }
+        .cal-day.other-month .cal-memos { opacity: 0.4; }
+        .cal-day .num { font-weight: bold; font-size: 1rem; margin-bottom: 5px; }
+        .cal-day.sun .num { color: var(--sun-color); }
+        .cal-day.sat .num { color: var(--sat-color); }
+        
+        .cal-memos { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .cal-memo-item { font-size: 0.8rem; color: var(--accent-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cal-memo-item.done { text-decoration: line-through; opacity: 0.4; }
+        .cal-memo-item.more { color: #888; font-weight: bold; font-size: 0.75rem; margin-top: 1px; }
+
+        /* --- 마영전 전용 CSS --- */
+        .inside-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: center; }
+        .inside-table th, .inside-table td { padding: 8px 4px; border-bottom: 1px solid var(--border-color); color: var(--text-color); white-space: nowrap; }
+        .inside-table th { background-color: var(--link-bg); font-weight: bold; }
+
+        /* 마영전 탭 신규 레이아웃 (4열 그리드 방식 기반) */
+        .vindic-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 20px; width: 100%; }
+        .block-span-4 { grid-column: 1 / span 4; } /* 전체 4폭 차지 */
+        .block-span-2 { grid-column: 1 / span 2; } /* 절반 폭 차지 */
+
+        /* 마영전 임무리스트와 연동되는 라디오 버튼 전용 악센트 컬러 */
+        .citadel-radio.idx-0 { accent-color: #ff4d4f; }
+        .citadel-radio.idx-1 { accent-color: #1890ff; }
+        .citadel-radio.idx-2 { accent-color: #389e0d; }
+        .citadel-radio.idx-3 { accent-color: #fa8c16; } /* 4캐릭터 확장 대비 */
+        .citadel-grid { display: grid; grid-template-columns: repeat(25, minmax(22px, 1fr)); width: 100%; align-items: stretch; }
+        .citadel-cell { min-height: 30px; display: flex; align-items: center; justify-content: center; color: var(--text-color); box-sizing: border-box; }
+        .citadel-header-cell { font-size: 0.82rem; font-weight: 700; background: var(--link-bg); border-bottom: 1px solid var(--border-color); }
+        .citadel-radio-cell { cursor: pointer; }
+        .citadel-radio-cell input { margin: 0; cursor: pointer; }
+        .citadel-boundary { border-left: 1px solid #ccc; }
+
+        @media (max-width: 1200px) {
+            .vindic-container { grid-template-columns: 1fr; }
+            .block-span-4, .block-span-2 { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+<div class="sidebar">
+    <button id="btn-home" class="side-btn active" onclick="switchTab('home')"><span class="icon">🏠</span><span class="text">홈</span></button>
+    <button id="btn-calendar-tab" class="side-btn" onclick="switchTab('calendar-tab')"><span class="icon">📅</span><span class="text">달력</span></button>
+    <button id="btn-vindic-tab" class="side-btn" onclick="switchTab('vindic-tab')"><span class="icon">⚔️</span><span class="text">마영전</span></button>
+    <button id="btn-memo" class="side-btn" onclick="switchTab('memo')"><span class="icon">📝</span><span class="text">메모</span></button>
+    <button id="theme-toggle-btn" class="side-btn theme-toggle" onclick="toggleTheme()">
+        <b id="theme-icon">🌙</b><span id="theme-text" class="text">다크 모드</span>
+    </button>
+</div>
+
+<div class="main-content">
+    <div class="header-frame">
+        <div class="info-bar">
+            <div id="realtime-clock">불러오는 중...</div>
+            <div class="search-group">
+                <form action="https://www.google.com/search" method="GET" target="_blank" class="search-box" onsubmit="const el = this.elements['q']; setTimeout(() => { el.value = ''; el.blur(); }, 10)">
+                    <img src="https://www.google.com/favicon.ico" style="width:16px; margin-right:4px;">
+                    <input type="text" name="q" class="search-input" placeholder="Google 검색">
+                </form>
+
+                <form action="https://search.naver.com/search.naver" method="GET" target="_blank" class="search-box" onsubmit="const el = this.elements['query']; setTimeout(() => { el.value = ''; el.blur(); }, 10)">
+                    <img src="https://www.naver.com/favicon.ico" style="width:16px; margin-right:4px;">                    
+                    <input type="text" name="query" class="search-input" placeholder="Naver 검색">
+                </form>
+
+                <form action="https://www.youtube.com/results" method="GET" target="_blank" class="search-box" onsubmit="const el = this.elements['search_query']; setTimeout(() => { el.value = ''; el.blur(); }, 10)">
+                    <img src="https://www.google.com/s2/favicons?domain=youtube.com" style="width:16px; margin-right:4px;">
+                    <input type="text" name="search_query" class="search-input" placeholder="YouTube 검색">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="home" class="tab-content active">
+        <div class="container">
+            <div class="category-box">
+                <div class="category-title">🌐 메인 포털</div>
+                <ul class="link-list grid-2">
+                    <li class="link-item"><a href="https://www.google.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com">구글</a></li>
+                    <li class="link-item"><a href="https://www.youtube.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=youtube.com">유튜브</a></li>
+                    <li class="link-item"><a href="https://www.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com">네이버</a></li>
+                </ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">🤖 AI 도구</div>
+                <ul class="link-list grid-2">
+                    <li class="link-item"><a href="https://gemini.google.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gemini.google.com">제미나이</a></li>
+                    <li class="link-item"><a href="https://chatgpt.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=chatgpt.com">ChatGPT</a></li>
+                    <li class="link-item"><a href="https://grok.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=grok.com">그록 (Grok)</a></li>
+                    <li class="link-item"><a href="https://claude.ai/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=claude.ai">Claude</a></li>
+                </ul>
+            </div>
+
+
+            <div class="category-box">
+                <div class="category-title">📊 금융 & 투자</div>
+                <ul class="link-list">
+                    <li class="link-item"><a href="https://www.google.com/finance/portfolio/watchlist" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com">구글 금융</a></li>
+                    <li class="link-item"><a href="https://kr.investing.com/currencies/usd-krw" target="_blank"><img src="https://www.google.com/s2/favicons?domain=investing.com">원/달러 환율</a></li>
+                    <li class="link-item"><a href="https://www.fmkorea.com/index.php?mid=stock&category=2997204381" target="_blank"><img src="https://www.google.com/s2/favicons?domain=fmkorea.com">에펨코리아 (해외주식)</a></li>
+                </ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">🛠️ 유틸리티</div>
+                <ul class="link-list grid-2">
+                    <li class="link-item"><a href="https://search.naver.com/search.naver?query=암사동 날씨" target="_blank">☀️ 암사동 날씨</a></li>
+                    <li class="link-item"><a href="https://cleanair.seoul.go.kr/?area=111274&type=pm25" target="_blank"><img src="https://www.google.com/s2/favicons?domain=cleanair.seoul.go.kr">대기환경정보</a></li>
+                    <li class="link-item"><a href="https://search.naver.com/search.naver?query=달력" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com">네이버 달력</a></li>
+                    <li class="link-item"><a href="https://map.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=map.naver.com">네이버 지도</a></li>
+                    <li class="link-item"><a href="https://www.google.com/imghp?hl=ko" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com">구글 이미지</a></li>
+                </ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">👥 커뮤니티</div>
+                <ul class="link-list">
+                    <li class="link-item"><a href="https://www.fmkorea.com/best" target="_blank"><img src="https://www.google.com/s2/favicons?domain=fmkorea.com">에펨코리아 (포텐)</a></li>
+                </ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">🎮 게임 커뮤니티</div>
+                <ul class="link-list">
+                    <li class="link-item heroes-link"><a href="https://heroes.nexon.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=nexon.com">마비노기 영웅전 공식 홈페이지</a></li>
+                    <li class="link-item"><a href="https://heroes.inven.co.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=inven.co.kr">마비노기 영웅전 인벤</a></li>
+                    <li class="link-item"><a href="https://gall.dcinside.com/mgallery/board/lists/?id=vindic" target="_blank"><img src="https://www.google.com/s2/favicons?domain=dcinside.com">마비노기 영웅전 에린 갤러리</a></li>
+                    <li class="link-item"><a href="https://arca.live/b/mabinogiheroes" target="_blank"><img src="https://www.google.com/s2/favicons?domain=arca.live">마비노기 영웅전 채널</a></li>
+                </ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">🛠️ 마영전 유틸리티</div>
+                <ul class="link-list">
+                    <li class="link-item"><a href="https://openapi.nexon.com/my-application/191730/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=nexon.com">Nexon Open API</a></li>
+                    <li class="link-item"><a href="https://eunsokoo.github.io/heroes-character/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=github.io">캐릭터 조회 (eunsokoo)</a></li>
+                    <li class="link-item"><a href="https://xn--le5bt1s.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=xn--le5bt1s.com">키안닷컴</a></li>
+                    <li class="link-item"><a href="https://www.heroes-dev.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=heroes-dev.com">망스비</a></li>
+                    <li class="link-item"><a href="https://mabiheroes.gg/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=mabiheroes.gg">마영지지</a></li>
+                    <li class="link-item"><a href="https://www.mhon.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=mhon.kr">ON.KR</a></li>
+                </ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">🎬 OTT & 스트리밍</div>
+                <ul class="link-list grid-2">
+                    <li class="link-item"><a href="https://www.netflix.com/kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=netflix.com">넷플릭스</a></li>
+                    <li class="link-item"><a href="https://www.coupangplay.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupangplay.com">쿠팡플레이</a></li>
+                    <li class="link-item"><a href="https://www.tving.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=tving.com">티빙</a></li>
+                    <li class="link-item"><a href="https://www.wavve.com/" target="_blank"><img src="https://www.wavve.com/favicon.ico">웨이브</a></li>
+                    <li class="link-item"><a href="https://www.disneyplus.com/ko-kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=disneyplus.com">디즈니+</a></li>
+                    <li class="link-item"><a href="https://www.laftel.net/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=laftel.net&sz=32">라프텔</a></li>
+                    <li class="link-item"><a href="https://watcha.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=watcha.com">왓챠</a></li>
+                    <li class="link-item"><a href="https://tv.apple.com/kr" target="_blank"><img src="https://tv.apple.com/favicon.ico">Apple TV</a></li>
+                    <li class="link-item"><a href="https://tvwiki22.net/" target="_blank"><img src="https://tvwiki22.net/favicon.ico">티비위키</a></li>
+                    <li class="link-item"><a href="https://linkkf.tv/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=linkkf.tv">LinkKF</a></li>
+                    <li class="link-item"><a href="https://ohli24.net/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=ohli24.net">OHLI24</a></li>
+                    <li class="link-item"><a href="https://moeni.net/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=moeni.net">모에니</a></li>
+                    <li class="link-item"><a href="https://anilife.app/home" target="_blank"><img src="https://www.google.com/s2/favicons?domain=anilife.app">애니라이프</a></li>
+                </ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">⭐ 즐겨찾기</div>
+                <input type="text" id="link-name" class="custom-input" placeholder="사이트 이름">
+                <input type="text" id="link-url" class="custom-input" placeholder="https://..." onkeypress="if(event.keyCode==13) addCustomLink()">
+                <button class="add-btn" onclick="addCustomLink()">추가하기</button>
+                <ul id="custom-link-list" class="link-list" style="border-top:1px solid var(--border-color); padding-top:10px;"></ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">
+                    <span>✅ 체크리스트</span>
+                    <button onclick="uncheckAllQueue()" style="font-size: 0.75rem; padding: 3px 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--link-bg); color: var(--text-color); cursor: pointer; font-weight: 500; transition: 0.2s;">선택 해제</button>
+                </div>
+                <input type="text" id="queue-input" class="custom-input" placeholder="할 일 입력..." onkeypress="if(event.keyCode==13) addQueue()">
+                <div id="queue-list"></div>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">⚔️ 마영전 임무 리스트</div>
+                <div id="ma-queue-list"></div>
+                <div style="font-size: 0.75rem; color: #888; margin-top: 10px; text-align: right;">오전 9시 초기화</div>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">🛒 쇼핑 & 이벤트</div>
+                <ul class="link-list">
+                    <li class="link-item coupang-link"><a href="https://www.coupang.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupang.com">쿠팡</a></li>
+                    <li class="link-item ali-link"><a href="https://ko.aliexpress.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com">알리익스프레스</a></li>
+                    <li class="link-item ali-link"><a href="https://www.aliexpress.com/p/coin-pc-index/index.html" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com">알리익스프레스(출석)</a></li>
+                    <li class="link-item gmarket-link"><a href="https://www.gmarket.co.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓</a></li>
+                    <li class="link-item gmarket-link"><a href="https://www.gmarket.co.kr/e/mth/smilelottery" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓 (복권)</a></li>
+                    <li class="link-item gmarket-link"><a href="https://promotion.gmarket.co.kr/Event/pluszone.asp" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓 (출석)</a></li>
+                    <li class="link-item bithumb-link"><a href="https://feed.bithumb.com/notice?category=8" target="_blank"><img src="https://www.google.com/s2/favicons?domain=bithumb.com">빗썸 (이벤트)</a></li>
+                </ul>
+            </div>
+
+            <div class="category-box">
+                <div class="category-title">➕ 계산기 (키보드)</div>
+                <div class="slim-calc-container"><div id="slim-display">0</div></div>
+                <div style="font-size: 0.7rem; color: #888; text-align: right;">Enter: 결과 | Backspace: 삭제 | Esc: 초기화</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="calendar-tab" class="tab-content">
+        <div class="calendar-page-container">
+            <div class="calendar-main">
+                <div class="calendar-header">
+                    <button class="cal-nav" onclick="goToToday()">오늘</button>
+                    <button class="cal-nav" onclick="changeMonth(-1)"><svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg></button>
+                    <div class="cal-title-wrapper">
+                        <h2 id="cal-title"></h2>
+                        <button id="toggle-tri" class="tri-btn" onclick="toggleQuickPicker()"><svg id="tri-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
+                    </div>
+                    <button class="cal-nav" onclick="changeMonth(1)"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
+                    <div id="quick-picker">
+                        <select id="pick-year" style="padding:8px; border-radius:6px;"></select>
+                        <select id="pick-month" style="padding:8px; border-radius:6px;">
+                            <option value="0">1월</option><option value="1">2월</option><option value="2">3월</option><option value="3">4월</option><option value="4">5월</option><option value="5">6월</option><option value="6">7월</option><option value="7">8월</option><option value="8">9월</option><option value="9">10월</option><option value="10">11월</option><option value="11">12월</option>
+                        </select>
+                        <button class="cal-nav" onclick="applyQuickPicker()">이동</button>
+                    </div>
+                </div>
+                <div id="calendar-body" class="calendar-grid"></div>
+            </div>
+            <div class="calendar-side">
+                <div style="font-weight: bold; margin-bottom: 15px;">✅ <span id="selected-date-label">날짜 선택</span></div>
+                <input type="text" id="cal-input" class="custom-input" placeholder="할 일 입력..." onkeypress="if(event.keyCode==13) addMemo()">
+                <button class="add-btn" onclick="addMemo()">추가</button>
+                <div id="memo-list" style="margin-top: 15px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="vindic-tab" class="tab-content">
+        <div class="vindic-container">
+            <div class="category-box block-span-4">
+                <div class="category-title">🏰 그림자의 성채</div>
+                <div id="citadel-container" style="display: flex; flex-direction: column; width: 100%;"></div>
+                
+                <div style="font-size: 0.81rem; color: var(--text-color); margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-color); line-height: 1.6; letter-spacing: 0.3px;">
+                    💡 <strong>DPS 별 보상 등급</strong><br>
+                    <strong>F</strong>:0 &emsp;&emsp;&emsp; <strong>E6</strong>:2000 | <strong>E5</strong>:4000 | <strong>E4</strong>:5000 | <strong>E3</strong>:6000 | <strong>E2</strong>:7000 | <strong>E1</strong>:8000 &emsp;&emsp;&emsp;
+                    <strong>D6</strong>:9000 | <strong>D5</strong>:10000 | <strong>D4</strong>:11000 | <strong>D3</strong>:12000 | <strong>D2</strong>:13000 | <strong>D1</strong>:14000 &emsp;&emsp;&emsp; 
+                    <strong>C6</strong>:15000 | <strong>C5</strong>:16000 | <strong>C4</strong>:17000 | <strong>C3</strong>:18000 | <strong>C2</strong>:19000 | <strong>C1</strong>:20000<br>
+                    <strong>B6</strong>:25000 | <strong>B5</strong>:30000 | <strong>B4</strong>:35000 | <strong>B3</strong>:40000 | <strong>B2</strong>:45000 | <strong>B1</strong>:50000 &emsp;&emsp;&emsp; 
+                    <strong>A6</strong>:55000 | <strong>A5</strong>:60000 | <strong>A4</strong>:65000 | <strong>A3</strong>:70000 | <strong>A2</strong>:75000 | <strong>A1</strong>:80000 &emsp;&emsp;&emsp; 
+                    <strong>S6</strong>:100000 | <strong>S5</strong>:120000 | <strong>S4</strong>:145000 | <strong>S3</strong>:175000 | <strong>S2</strong>:210000 | <strong>S1</strong>:250000
+                </div>
+            </div>
+
+            <div class="category-box block-span-2">
+                <div class="category-title">🙂 캐릭터 인사이드</div>
+                <table class="inside-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>★</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>+기쁨</strong></td><td>공격력 +200</td><td>행운 +3</td><td>밸런스 +2</td><td>행운 +3</td></tr>
+                        <tr><td><strong>+울음</strong></td><td>방어력 +200</td><td>행운 +3</td><td>크리티컬 저항 +3</td><td>밸런스 +2</td></tr>
+                        <tr><td><strong>+덤덤</strong></td><td>공격속도 +2</td><td>공격력 +200</td><td>밸런스 +2</td><td>크리티컬 저항 +3</td></tr>
+                        <tr><td><strong>+화남</strong></td><td>공격속도 +2</td><td>공격력 +200</td><td>밸런스 +2</td><td>크리티컬 저항 +3</td></tr>
+                        <tr><td><strong>+빙글</strong></td><td>공격속도 +2</td><td>밸런스 +2</td><td>공격력 +200</td><td>방어력 +200</td></tr>
+                        <tr><td><strong>+화이팅</strong></td><td>행운 +3</td><td>방어력 +200</td><td>밸런스 +2</td><td>밸런스 +2</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="category-box block-span-2">
+                <div class="category-title">🔨 [보급] 일반 보급 임무 # 강화 단계별 포인트</div>
+                <table class="inside-table">
+                    <thead>
+                        <tr>
+                            <th>+ 0</th>
+                            <th>+ 1</th>
+                            <th>+ 2</th>
+                            <th>+ 3</th>
+                            <th>+ 4</th>
+                            <th>+ 5</th>
+                            <th>+ 6</th>
+                            <th>+ 7</th>
+                            <th>+ 8</th>
+                            <th>+ 9</th>
+                            <th>+ 10</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>5</td>
+                            <td>7</td>
+                            <td>10</td>
+                            <td>13</td>
+                            <td>17</td>
+                            <td>21</td>
+                            <td>25</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="memo" class="tab-content">
+        <div class="category-box" style="width: 100%;">
+            <div class="category-title" style="display: flex; justify-content: space-between; align-items: center;">
+                📝 메모
+                <label class="spellcheck-label" style="font-size: 0.8rem; color: #888; font-weight: normal; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; user-select: none; opacity: 0.8;">
+                    <input type="checkbox" id="spellcheck-toggle" style="width: 13px; height: 13px; margin: 0; cursor: pointer; accent-color: black; filter: grayscale(1); transition: all 0.2s;"> 맞춤법 검사
+                </label>
+            </div>
+            <textarea id="main-memo" class="memo-area"></textarea>
+            <div id="memo-status" class="save-status">자동 저장됨</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const MAX_CHECKBOXES = 3; 
+    const ALL_TASKS = [
+        '기사단', '붉은 달의 기운', '레이드', '출정 허가증', '일일 미션', 
+        '그림자의 성채', '결사대', '시공간 왜곡', '스페셜 던전', '길드 던전', '미혹의 탑'
+    ];
+
+    let slimExpr = "";
+    const slimDisplay = document.getElementById('slim-display');
+
+    function updateSlimDisp(v) {
+        slimExpr = v;
+        slimDisplay.innerText = slimExpr || "0";
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+        const key = e.key;
+        if (!/^[0-9+\-*/.]$/.test(key) && !['Enter','Backspace','Escape'].includes(key)) return;
+        if (/[0-9]/.test(key) || ['+', '-', '*', '/', '.'].includes(key)) {
+            updateSlimDisp(slimExpr + key);
+        } else if (key === 'Enter') {
+            e.preventDefault();
+            try { updateSlimDisp(eval(slimExpr).toString()); } catch { updateSlimDisp("Error"); setTimeout(() => updateSlimDisp(""), 1000); }
+        } else if (key === 'Backspace') { updateSlimDisp(slimExpr.slice(0, -1)); } else if (key === 'Escape') { updateSlimDisp(""); }
+    });
+
+    function checkMaTasks() {
+        const now = new Date();
+        const lastCheck = localStorage.getItem('last_ma_auto_check');
+        const lastDate = lastCheck ? new Date(lastCheck) : new Date(0);
+        const targetToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0);
+
+        let maQueue = JSON.parse(localStorage.getItem('ma_queue_final')); 
+        if (!maQueue || maQueue.length !== ALL_TASKS.length) {
+            maQueue = ALL_TASKS.map(task => ({ text: task, doneStates: new Array(MAX_CHECKBOXES).fill(false) }));
+        }
+
+        if (lastDate < targetToday && now >= targetToday) {
+            maQueue = maQueue.map(item => {
+                const dailyTasks = ['기사단', '붉은 달의 기운', '레이드', '출정 허가증', '일일 미션'];
+                const weeklyTasks = ['결사대', '시공간 왜곡', '그림자의 성채', '길드 던전', '스페셜 던전'];
+                let shouldReset = false;
+                if (dailyTasks.includes(item.text)) shouldReset = true;
+                if (weeklyTasks.includes(item.text) && now.getDay() === 4 && now.getHours() >= 9) shouldReset = true;
+                if (item.text === '미혹의 탑' && now.getDate() === 1 && now.getHours() >= 9) shouldReset = true;
+                return shouldReset ? { ...item, doneStates: new Array(MAX_CHECKBOXES).fill(false) } : item;
+            });
+            localStorage.setItem('last_ma_auto_check', now.toISOString());
+        }
+        localStorage.setItem('ma_queue_final', JSON.stringify(maQueue));
+        renderMaQueue();
+    }
+
+    function renderMaQueue() {
+        const items = JSON.parse(localStorage.getItem('ma_queue_final') || '[]');
+        const listDiv = document.getElementById('ma-queue-list');
+        if (!listDiv) return;
+        listDiv.innerHTML = items.map((item, tIdx) => {
+            let cbHtml = `<div class="ma-checkbox-group">`;
+            for (let i = 0; i < MAX_CHECKBOXES; i++) {
+                cbHtml += `<input type="checkbox" class="ma-checkbox idx-${i}" ${item.doneStates[i] ? 'checked' : ''} onclick="toggleMaQueue(${tIdx}, ${i})">`;
+            }
+            cbHtml += `</div>`;
+            return `<div class="queue-item"><span class="${item.doneStates.every(s => s) ? 'done' : ''}">${item.text}</span>${cbHtml}</div>`;
+        }).join('');
+    }
+
+    function toggleMaQueue(tIdx, cIdx) {
+        const items = JSON.parse(localStorage.getItem('ma_queue_final'));
+        items[tIdx].doneStates[cIdx] = !items[tIdx].doneStates[cIdx];
+        localStorage.setItem('ma_queue_final', JSON.stringify(items));
+        renderMaQueue();
+    }
+
+    // --- 그림자의 성채 렌더링 (1~6단계 세분화 및 가로폭 전체 정렬) ---
+    function renderShadowCitadel() {
+        const container = document.getElementById('citadel-container');
+        if (!container) return;
+
+        // 37개 등급 순서 세팅 (F -> E6~E1 -> D6~D1 ... -> S6~S1)
+        const GRADES = [
+            'F', 
+            /*'E6', 'E5', 'E4', 'E3', 'E2', 'E1', 
+            'D6', 'D5', 'D4', 'D3', 'D2', 'D1', 
+            */
+            'C6', 'C5', 'C4', 'C3', 'C2', 'C1', 
+            'B6', 'B5', 'B4', 'B3', 'B2', 'B1', 
+            'A6', 'A5', 'A4', 'A3', 'A2', 'A1', 
+            'S6', 'S5', 'S4', 'S3', 'S2', 'S1'
+        ];
+
+        const GROUP_STARTS = new Set(['C6', 'B6', 'A6', 'S6']);
+        const boundaryClass = grade => GROUP_STARTS.has(grade) ? ' citadel-boundary' : '';
+        let savedGrades = JSON.parse(localStorage.getItem('citadel_char_grades') || '[]');
+        let html = '<div class="citadel-grid">';
+
+        GRADES.forEach(g => {
+            html += `<div class="citadel-cell citadel-header-cell${boundaryClass(g)}">${g}</div>`;
+        });
+
+        // 등급 텍스트는 첫 행에만 표시하고, 라디오 버튼은 같은 열에 맞춰 배치
+        for (let charIdx = 0; charIdx < MAX_CHECKBOXES; charIdx++) {
+            const currentGrade = savedGrades[charIdx] || 'F';
+
+            GRADES.forEach(g => {
+                const isChecked = currentGrade === g ? 'checked' : '';
+                html += `
+                    <label class="citadel-cell citadel-radio-cell${boundaryClass(g)}">
+                        <input type="radio" name="citadel_radio_${charIdx}" value="${g}" ${isChecked} onchange="saveShadowCitadel(${charIdx}, '${g}')" class="citadel-radio idx-${charIdx}">
+                    </label>
+                `;
+            });
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    function saveShadowCitadel(charIdx, gradeValue) {
+        let savedGrades = JSON.parse(localStorage.getItem('citadel_char_grades') || '[]');
+        savedGrades[charIdx] = gradeValue;
+        localStorage.setItem('citadel_char_grades', JSON.stringify(savedGrades));
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        
+        const btnMap = {
+            'home': 'btn-home',
+            'calendar-tab': 'btn-calendar-tab',
+            'vindic-tab': 'btn-vindic-tab',
+            'memo': 'btn-memo'
+        };
+        const btnId = btnMap[tabId] || 'btn-home';
+        document.getElementById(btnId).classList.add('active');
+    }
+
+    function toggleTheme() {
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', newTheme);
+    
+        const btn = document.getElementById('theme-toggle-btn'); 
+        const icon = document.getElementById('theme-icon');
+        const text = document.getElementById('theme-text');
+    
+        if (newTheme === 'dark') {
+            icon.innerText = '☀️'; text.innerText = '라이트 모드';
+            btn.style.backgroundColor = '#ffffff'; btn.style.color = '#1a1a1a';
+        } else {
+            icon.innerText = '🌙'; text.innerText = '다크 모드';
+            btn.style.backgroundColor = '#3e3e3f'; btn.style.color = '#ffca28';
+        }
+        localStorage.setItem('dashboard-theme', newTheme);
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const date = String(now.getDate()).padStart(2, '0');
+        const dateText = `${year}.${month}.${date}`;
+
+        const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const dayName = dayNames[now.getDay()];
+    
+        const firstDay = new Date(year, now.getMonth(), 1).getDay();
+        const weekNo = Math.ceil((now.getDate() + firstDay) / 7);
+        const weekNames = ['', '첫째 주', '둘째 주', '셋째 주', '넷째 주', '다섯째 주'];
+        const weekKorean = weekNames[weekNo] || `${weekNo}째 주`;
+
+        const timeText = now.toLocaleTimeString('ko-KR', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        document.getElementById('realtime-clock').innerText = `${dateText} ${dayName} ${timeText} (${weekKorean})`;
+    }
+
+    function renderQueue() {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue') || '[]');
+        document.getElementById('queue-list').innerHTML = items.map((item, i) => `
+            <div class="queue-item">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="ma-checkbox" ${item.done ? 'checked' : ''} onclick="toggleQueue(${i})">
+                    <span class="${item.done ? 'done' : ''}">${item.text}</span>
+                </div>
+                <button class="del-btn" onclick="removeQueue(${i})">×</button>
+            </div>
+        `).join('');
+    }
+    function addQueue() {
+        const val = document.getElementById('queue-input').value.trim();
+        if(!val) return;
+        const items = JSON.parse(localStorage.getItem('dashboard_queue') || '[]');
+        items.push({ text: val, done: false });
+        localStorage.setItem('dashboard_queue', JSON.stringify(items));
+        document.getElementById('queue-input').value = ''; renderQueue();
+    }
+    function toggleQueue(i) {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue'));
+        items[i].done = !items[i].done;
+        localStorage.setItem('dashboard_queue', JSON.stringify(items)); renderQueue();
+    }
+    function removeQueue(i) {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue'));
+        items.splice(i, 1);
+        localStorage.setItem('dashboard_queue', JSON.stringify(items)); renderQueue();
+    }
+    function uncheckAllQueue() {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue') || '[]');
+        items.forEach(item => item.done = false);
+        localStorage.setItem('dashboard_queue', JSON.stringify(items));
+        renderQueue();
+    }
+
+    function renderCustomLinks() {
+        const links = JSON.parse(localStorage.getItem('dashboard_links') || '[]');
+        document.getElementById('custom-link-list').innerHTML = links.map((link, i) => {
+            let domain = "";
+            try { const tempUrl = link.url.includes('://') ? link.url : 'https://' + link.url; domain = new URL(tempUrl).hostname; } catch(e) { domain = ""; }
+            const finalUrl = link.url.includes('://') ? link.url : 'https://' + link.url;
+            return `
+                <li class="link-item">
+                    <a href="${finalUrl}" target="_blank">
+                        <img src="https://${domain}/favicon.ico" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?domain=${domain}';">
+                        ${link.name}
+                    </a>
+                    <button class="del-btn" onclick="removeLink(${i})">×</button>
+                </li>
+            `;
+        }).join('');
+    }
+
+    function addCustomLink() {
+        const name = document.getElementById('link-name').value.trim();
+        const url = document.getElementById('link-url').value.trim();
+        if(!name || !url) return;
+        const links = JSON.parse(localStorage.getItem('dashboard_links') || '[]');
+        links.push({ name, url });
+        localStorage.setItem('dashboard_links', JSON.stringify(links));
+        document.getElementById('link-name').value = ''; document.getElementById('link-url').value = ''; renderCustomLinks();
+    }
+    function removeLink(i) {
+        const links = JSON.parse(localStorage.getItem('dashboard_links'));
+        links.splice(i, 1);
+        localStorage.setItem('dashboard_links', JSON.stringify(links)); renderCustomLinks();
+    }
+
+    window.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); } });
+
+    // --- 달력 로직 ---
+    let viewDate = new Date();
+    let selectedDateStr = new Date().toLocaleDateString('sv-SE');
+
+    function renderCalendar() {
+        const year = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+        document.getElementById('cal-title').innerText = `${year}년 ${month + 1}월`;
+
+        const body = document.getElementById('calendar-body');
+        body.innerHTML = '';
+
+        ['일', '월', '화', '수', '목', '금', '토'].forEach((d, i) => {
+            const cls = i === 0 ? 'sun' : (i === 6 ? 'sat' : '');
+            body.innerHTML += `<div class="cal-day-head ${cls}">${d}</div>`;
+        });
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+        const prevLastDate = new Date(year, month, 0).getDate();
+
+        let cells = [];
+        for (let i = firstDay; i > 0; i--) cells.push({ d: prevLastDate - i + 1, m: -1 });
+        for (let i = 1; i <= lastDate; i++) cells.push({ d: i, m: 0 });
+        while (cells.length < 42) cells.push({ d: cells.length - lastDate - firstDay + 1, m: 1 });
+
+        cells.forEach(cell => {
+            const dateObj = new Date(year, month + cell.m, cell.d);
+            const dStr = dateObj.toLocaleDateString('sv-SE');
+            const isToday = dStr === new Date().toLocaleDateString('sv-SE');
+            const isActive = dStr === selectedDateStr;
+            const dayIdx = dateObj.getDay();
+            const colorCls = dayIdx === 0 ? 'sun' : (dayIdx === 6 ? 'sat' : '');
+
+            const memos = JSON.parse(localStorage.getItem(`cal_todo_${dStr}`) || '[]');
+            let memoHtml = '';
+            if (memos.length <= 3) {
+                memoHtml = memos.map(m => `<div class="cal-memo-item ${m.done ? 'done' : ''}">${m.text}</div>`).join('');
+            } else {
+                const visibleMemos = memos.slice(0, 2);
+                memoHtml = visibleMemos.map(m => `<div class="cal-memo-item ${m.done ? 'done' : ''}">${m.text}</div>`).join('');
+                memoHtml += `<div class="cal-memo-item more">+${memos.length - 2}개 더보기</div>`;
+            }
+
+            body.innerHTML += `
+                <div class="cal-day ${cell.m !== 0 ? 'other-month' : ''} ${isToday ? 'today' : ''} ${isActive ? 'active' : ''} ${colorCls}" onclick="selectDate('${dStr}')">
+                    <span class="num">${cell.d}</span>
+                    <div class="cal-memos">${memoHtml}</div>
+                </div>
+            `;
+        });
+        updateMemoList();
+    }
+
+    function toggleQuickPicker() {
+        const picker = document.getElementById('quick-picker');
+        const triIcon = document.getElementById('tri-icon');
+        if (picker.style.display === 'flex') {
+            picker.style.display = 'none'; triIcon.innerHTML = '<path d="M7 10l5 5 5-5z"/>';
+        } else {
+            const yearSelect = document.getElementById('pick-year'); yearSelect.innerHTML = '';
+            for (let i = 2000; i <= 2064; i++) {
+                const opt = document.createElement('option'); opt.value = i; opt.innerText = i + '년';
+                if (i === viewDate.getFullYear()) opt.selected = true;
+                yearSelect.appendChild(opt);
+            }
+            document.getElementById('pick-month').value = viewDate.getMonth();
+            picker.style.display = 'flex'; triIcon.innerHTML = '<path d="M7 14l5-5 5 5z"/>';
+        }
+    }
+
+    function applyQuickPicker() {
+        viewDate.setFullYear(document.getElementById('pick-year').value);
+        viewDate.setMonth(document.getElementById('pick-month').value);
+        renderCalendar(); toggleQuickPicker(); 
+    }
+    function changeMonth(v) { viewDate.setMonth(viewDate.getMonth() + v); renderCalendar(); }
+    function goToToday() { viewDate = new Date(); selectedDateStr = viewDate.toLocaleDateString('sv-SE'); document.getElementById('selected-date-label').innerText = selectedDateStr; renderCalendar(); }
+    function selectDate(d) { selectedDateStr = d; document.getElementById('selected-date-label').innerText = d; renderCalendar(); }
+
+    function addMemo() {
+        const input = document.getElementById('cal-input');
+        if (!input.value.trim()) return;
+        const memos = JSON.parse(localStorage.getItem(`cal_todo_${selectedDateStr}`) || '[]');
+        memos.push({ text: input.value, done: false });
+        localStorage.setItem(`cal_todo_${selectedDateStr}`, JSON.stringify(memos));
+        input.value = ''; renderCalendar();
+    }
+
+    function updateMemoList() {
+        const memos = JSON.parse(localStorage.getItem(`cal_todo_${selectedDateStr}`) || '[]');
+        document.getElementById('memo-list').innerHTML = memos.map((m, i) => `
+            <div class="queue-item">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" ${m.done ? 'checked' : ''} onclick="toggleMemo(${i})">
+                    <span class="${m.done ? 'done' : ''}">${m.text}</span>
+                </div>
+                <button class="del-btn" onclick="deleteMemo(${i})">×</button>
+            </div>
+        `).join('');
+    }
+    function toggleMemo(i) {
+        const memos = JSON.parse(localStorage.getItem(`cal_todo_${selectedDateStr}`));
+        memos[i].done = !memos[i].done;
+        localStorage.setItem(`cal_todo_${selectedDateStr}`, JSON.stringify(memos)); renderCalendar();
+    }
+    function deleteMemo(i) {
+        const memos = JSON.parse(localStorage.getItem(`cal_todo_${selectedDateStr}`));
+        memos.splice(i, 1);
+        localStorage.setItem(`cal_todo_${selectedDateStr}`, JSON.stringify(memos)); renderCalendar();
+    }
+
+    window.onload = () => {
+        const savedTheme = localStorage.getItem('dashboard-theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+     
+        const btn = document.getElementById('theme-toggle-btn');
+        const icon = document.getElementById('theme-icon');
+        const text = document.getElementById('theme-text');
+
+        if (savedTheme === 'dark') {
+            icon.innerText = '☀️'; text.innerText = '라이트 모드';
+            btn.style.backgroundColor = '#ffffff'; btn.style.color = '#1a1a1a';
+        } else {
+            icon.innerText = '🌙'; text.innerText = '다크 모드';
+            btn.style.backgroundColor = '#3e3e3f'; btn.style.color = '#ffca28';
+        }
+
+        updateClock(); setInterval(updateClock, 1000);
+        checkMaTasks(); renderQueue(); renderCustomLinks();
+
+        const memoArea = document.getElementById('main-memo');
+        const memoStatus = document.getElementById('memo-status');
+        const spellcheckToggle = document.getElementById('spellcheck-toggle');
+
+        memoArea.value = localStorage.getItem('dashboard_memo_content') || '';
+        const isSpellcheckOn = localStorage.getItem('memo_spellcheck') === 'true'; 
+        spellcheckToggle.checked = isSpellcheckOn; memoArea.spellcheck = isSpellcheckOn;
+
+        let saveTimer;
+        memoArea.addEventListener('input', (e) => {
+            memoStatus.innerText = '데이터 저장 중'; memoStatus.style.color = '#888';
+            localStorage.setItem('dashboard_memo_content', e.target.value);
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => { memoStatus.innerText = '자동 저장됨'; }, 500);
+        });
+
+        spellcheckToggle.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            memoArea.spellcheck = isChecked;
+            localStorage.setItem('memo_spellcheck', isChecked);
+            if (isChecked) { memoArea.blur(); setTimeout(() => { memoArea.focus(); }, 10); } 
+            else { const tempValue = memoArea.value; memoArea.value = ''; memoArea.value = tempValue; }
+        });
+
+        renderCalendar();
+        document.getElementById('selected-date-label').innerText = selectedDateStr;
+        renderShadowCitadel();
+    }; 
+</script>
+</body>
+</html>
