@@ -220,7 +220,8 @@
 
         /* 테이블 행 호버 효과 (빈 행 제외) */
         #raid-table-container table tbody tr:not(.empty-row):hover,
-        #connection-table-container table tbody tr:not(.empty-row):hover {
+        #connection-table-container table tbody tr:not(.empty-row):hover,
+        #coupon-table-container table tbody tr:not(.empty-row):hover {
             background-color: rgba(128, 128, 128, 0.15);
             transition: background-color 0.2s ease-in-out;
         }
@@ -440,10 +441,20 @@
                 </div>
             </div>
 
-            <div class="category-box block-span-2">
-                <div class="category-title">🎯 던전별 능력치 상한</div>
-                <div id="raid-table-container" style="overflow-x: auto;">
-                    <div style="padding: 20px; text-align: center; color: #888;">데이터를 불러오는 중입니다...</div>
+            <!-- 던전별 능력치 상한 & 쿠폰 블록을 세로로 묶기 -->
+            <div class="block-span-2" style="display: flex; flex-direction: column;">
+                <div class="category-box">
+                    <div class="category-title">🎯 던전별 능력치 상한</div>
+                    <div id="raid-table-container" style="overflow-x: auto;">
+                        <div style="padding: 20px; text-align: center; color: #888;">데이터를 불러오는 중입니다...</div>
+                    </div>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">🎟️ 쿠폰</div>
+                    <div id="coupon-table-container" style="overflow-x: auto;">
+                        <div style="padding: 20px; text-align: center; color: #888;">데이터를 불러오는 중입니다...</div>
+                    </div>
                 </div>
             </div>
 
@@ -1013,9 +1024,11 @@
         // 스프레드시트 데이터 불러오기 실행
         const raidUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQilQ4RJWDnS6GQjygMpOgHRg3DD13UjVsWZwmqLr5rPrAnlusR_ajf_IPYn5BdFI6MRUVPXbUIdB2m/pub?gid=0&single=true&output=csv';
         const connectionUrl = 'https://docs.google.com/spreadsheets/d/1PKC6JqBjxjrbihrbexWoldUYRIgBwHuFlQQJU2WN0Lc/export?format=csv&gid=1277639152';
+        const couponUrl = 'https://docs.google.com/spreadsheets/d/1PKC6JqBjxjrbihrbexWoldUYRIgBwHuFlQQJU2WN0Lc/export?format=csv&gid=705899926';
         
         loadSheetData(raidUrl, 'raid-table-container');
         loadSheetData(connectionUrl, 'connection-table-container');
+        loadSheetData(couponUrl, 'coupon-table-container');
     }; 
 </script>
 </body>
