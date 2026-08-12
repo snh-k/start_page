@@ -218,8 +218,9 @@
             .block-span-4, .block-span-2 { grid-column: span 1; }
         }
 
-        /* 던전별 레이드 상한 테이블 행 호버 효과 (빈 행 제외) */
-        #raid-table-container table tbody tr:not(.empty-row):hover {
+        /* 테이블 행 호버 효과 (빈 행 제외) */
+        #raid-table-container table tbody tr:not(.empty-row):hover,
+        #connection-table-container table tbody tr:not(.empty-row):hover {
             background-color: rgba(128, 128, 128, 0.15);
             transition: background-color 0.2s ease-in-out;
         }
@@ -467,6 +468,13 @@
                             <tr><td><strong>+화이팅</strong></td><td>행운 +3</td><td>방어력 +200</td><td>밸런스 +2</td><td>밸런스 +2</td></tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">🤝 인연</div>
+                    <div id="connection-table-container" style="overflow-x: auto;">
+                        <div style="padding: 20px; text-align: center; color: #888;">데이터를 불러오는 중입니다...</div>
+                    </div>
                 </div>
 
                 <div class="category-box">
@@ -870,19 +878,13 @@
         localStorage.setItem(`cal_todo_${selectedDateStr}`, JSON.stringify(memos)); renderCalendar();
     }
 
-    // --- 구글 스프레드시트 연동 로직 ---
-    async function loadRaidData() {
-        // 구글 스프레드시트 문서 ID
-        const sheetId = '1PKC6JqBjxjrbihrbexWoldUYRIgBwHuFlQQJU2WN0Lc';
-        // CSV 포맷으로 내보내기 링크
-        const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQilQ4RJWDnS6GQjygMpOgHRg3DD13UjVsWZwmqLr5rPrAnlusR_ajf_IPYn5BdFI6MRUVPXbUIdB2m/pub?gid=0&single=true&output=csv`;
-
+    // --- 공통 구글 스프레드시트 연동 로직 ---
+    async function loadSheetData(url, containerId) {
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error('데이터를 불러오지 못했습니다.');
             const csvText = await response.text();
 
-            // 간단한 CSV 파서 (숫자에 들어간 쉼표 "60,120" 등을 처리하기 위함)
             const rows = [];
             let currentRow = [];
             let currentCell = '';
@@ -918,14 +920,14 @@
                 currentRow.push(currentCell); rows.push(currentRow);
             }
             
-            renderRaidTable(rows);
+            renderSheetTable(rows, containerId);
         } catch (error) {
             console.error('스프레드시트 연동 에러:', error);
-            document.getElementById('raid-table-container').innerHTML = '<div style="padding:20px; text-align:center; color:#ff4d4f;">데이터 연동에 실패했습니다. (스프레드시트가 "링크가 있는 모든 사용자"에게 공개되어 있는지 확인해주세요)</div>';
+            document.getElementById(containerId).innerHTML = '<div style="padding:20px; text-align:center; color:#ff4d4f;">데이터 연동에 실패했습니다. (스프레드시트가 공개되어 있는지 확인해주세요)</div>';
         }
     }
 
-    function renderRaidTable(rows) {
+    function renderSheetTable(rows, containerId) {
         if (!rows || rows.length === 0) return;
         
         let html = '<table class="inside-table"><thead><tr>';
@@ -956,7 +958,7 @@
         }
         
         html += '</tbody></table>';
-        document.getElementById('raid-table-container').innerHTML = html;
+        document.getElementById(containerId).innerHTML = html;
     }
 
     window.onload = () => {
@@ -1007,7 +1009,11 @@
         renderShadowCitadel();
         
         // 스프레드시트 데이터 불러오기 실행
-        loadRaidData();
+        const raidUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQilQ4RJWDnS6GQjygMpOgHRg3DD13UjVsWZwmqLr5rPrAnlusR_ajf_IPYn5BdFI6MRUVPXbUIdB2m/pub?gid=0&single=true&output=csv';
+        const connectionUrl = 'https://docs.google.com/spreadsheets/d/1PKC6JqBjxjrbihrbexWoldUYRIgBwHuFlQQJU2WN0Lc/export?format=csv&gid=1277639152';
+        
+        loadSheetData(raidUrl, 'raid-table-container');
+        loadSheetData(connectionUrl, 'connection-table-container');
     }; 
 </script>
 </body>
