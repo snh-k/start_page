@@ -97,8 +97,6 @@
         .queue-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
         .queue-item span.done { text-decoration: line-through; opacity: 0.4; color: #888; transition: all 0.2s; }
 
-        .slim-calc-container { background: #222; color: #0f0; padding: 10px; border-radius: 8px; margin-bottom: 5px; text-align: right; font-family: monospace; font-size: 1.2rem; min-height: 1.5rem; overflow: hidden; }
-
         .heroes-link a { background-color: #f4fce3 !important; border: 1px solid #82c91e !important; }
         [data-theme='dark'] .heroes-link a { background-color: #232b16 !important; border-color: #a9e34b !important; }
 
@@ -119,13 +117,12 @@
         .spellcheck-label:hover { color: var(--text-color) !important; }
         .spellcheck-label:hover input { opacity: 1 !important; }
 
-        /* 세로로 2칸을 차지하게 만드는 클래스 추가 */
         .row-span-2 { grid-row: span 2; }
 
         @media (max-width: 1200px) {
             .vindic-container { grid-template-columns: 1fr; }
             .block-span-4, .block-span-2 { grid-column: span 1; }
-            .row-span-2 { grid-row: span 1; } /* 화면이 좁아지면 다시 1칸으로 복구 */
+            .row-span-2 { grid-row: span 1; }
         }
 
         /* --- 달력 전용 CSS --- */
@@ -218,7 +215,6 @@
             .block-span-4, .block-span-2 { grid-column: span 1; }
         }
 
-        /* 테이블 행 호버 효과 (빈 행 제외) */
         #raid-table-container table tbody tr:not(.empty-row):hover,
         #connection-table-container table tbody tr:not(.empty-row):hover,
         #coupon-table-container table tbody tr:not(.empty-row):hover {
@@ -382,14 +378,7 @@
                     <li class="link-item coupang-link"><a href="https://www.coupang.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupang.com">쿠팡</a></li>
                     <li class="link-item ali-link"><a href="https://ko.aliexpress.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com">알리익스프레스</a></li>
                     <li class="link-item gmarket-link"><a href="https://www.gmarket.co.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓</a></li>
-
                 </ul>
-            </div>
-
-            <div class="category-box">
-                <div class="category-title">➕ 계산기 (키보드)</div>
-                <div class="slim-calc-container"><div id="slim-display">0</div></div>
-                <div style="font-size: 0.7rem; color: #888; text-align: right;">Enter: 결과 | Backspace: 삭제 | Esc: 초기화</div>
             </div>
         </div>
     </div>
@@ -408,7 +397,7 @@
                     <div id="quick-picker">
                         <select id="pick-year" style="padding:8px; border-radius:6px;"></select>
                         <select id="pick-month" style="padding:8px; border-radius:6px;">
-                            <option value="0">1월</option><option value="1">2월</option><option value="2">3월</option><option value="3">4월</option><option value="4">5월</option><option value="5">6월</option><option value="6">7월</option><option value="7">8월</option><option value="8">9월</option><option value="9">10월</option><option value="10">11월</option><option value="11">12월</option>
+                            <option value="0">1월</option><option value="1">2월</option><option value="2">3월</option><option value="3">4월</option><option value="5">5월</option><option value="5">6월</option><option value="6">7월</option><option value="7">8월</option><option value="8">9월</option><option value="9">10월</option><option value="10">11월</option><option value="11">12월</option>
                         </select>
                         <button class="cal-nav" onclick="applyQuickPicker()">이동</button>
                     </div>
@@ -441,7 +430,6 @@
                 </div>
             </div>
 
-            <!-- 던전별 능력치 상한 & 쿠폰 블록을 세로로 묶기 -->
             <div class="block-span-2" style="display: flex; flex-direction: column;">
                 <div class="category-box">
                     <div class="category-title">🎯 던전별 능력치 상한</div>
@@ -459,7 +447,6 @@
             </div>
 
             <div class="block-span-2" style="display: flex; flex-direction: column;">
-                
                 <div class="category-box">
                     <div class="category-title">🙂 캐릭터 인사이드</div>
                     <table class="inside-table">
@@ -527,7 +514,7 @@
                 </div>
 
             </div>
-            </div>
+        </div>
     </div>
 
     <div id="memo" class="tab-content">
@@ -551,24 +538,14 @@
         '그림자의 성채', '결사대', '시공간 왜곡', '스페셜 던전', '길드 던전', '미혹의 탑'
     ];
 
-    let slimExpr = "";
-    const slimDisplay = document.getElementById('slim-display');
-
-    function updateSlimDisp(v) {
-        slimExpr = v;
-        slimDisplay.innerText = slimExpr || "0";
-    }
-
+    // 입력 요소에 커서가 없을 때 1, 2, 3, 4 키로 탭 이동
     window.addEventListener('keydown', (e) => {
         if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-        const key = e.key;
-        if (!/^[0-9+\-*/.]$/.test(key) && !['Enter','Backspace','Escape'].includes(key)) return;
-        if (/[0-9]/.test(key) || ['+', '-', '*', '/', '.'].includes(key)) {
-            updateSlimDisp(slimExpr + key);
-        } else if (key === 'Enter') {
-            e.preventDefault();
-            try { updateSlimDisp(eval(slimExpr).toString()); } catch { updateSlimDisp("Error"); setTimeout(() => updateSlimDisp(""), 1000); }
-        } else if (key === 'Backspace') { updateSlimDisp(slimExpr.slice(0, -1)); } else if (key === 'Escape') { updateSlimDisp(""); }
+        
+        if (e.key === '1') switchTab('home');
+        else if (e.key === '2') switchTab('calendar-tab');
+        else if (e.key === '3') switchTab('vindic-tab');
+        else if (e.key === '4') switchTab('memo');
     });
 
     function checkMaTasks() {
@@ -945,19 +922,16 @@
         
         let html = '<table class="inside-table"><thead><tr>';
         
-        // 원본 첫 행(헤더) 구성
         const headers = rows[0];
         headers.forEach(header => {
             html += `<th>${header.trim()}</th>`;
         });
         html += '</tr></thead><tbody>';
         
-        // 원본 데이터 행 구성
         for (let i = 1; i < rows.length; i++) {
             const row = rows[i];
             const isEmpty = row.every(cell => cell.trim() === '');
             
-            // 비어있는 행 처리
             if (isEmpty) {
                 html += `<tr class="empty-row"><td colspan="${headers.length}" style="height: 10px; padding: 0; border-bottom: none; background: var(--link-bg);"></td></tr>`;
                 continue;
@@ -1021,7 +995,6 @@
         document.getElementById('selected-date-label').innerText = selectedDateStr;
         renderShadowCitadel();
         
-        // 스프레드시트 데이터 불러오기 실행
         const raidUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQilQ4RJWDnS6GQjygMpOgHRg3DD13UjVsWZwmqLr5rPrAnlusR_ajf_IPYn5BdFI6MRUVPXbUIdB2m/pub?gid=0&single=true&output=csv';
         const connectionUrl = 'https://docs.google.com/spreadsheets/d/1PKC6JqBjxjrbihrbexWoldUYRIgBwHuFlQQJU2WN0Lc/export?format=csv&gid=1277639152';
         const couponUrl = 'https://docs.google.com/spreadsheets/d/1PKC6JqBjxjrbihrbexWoldUYRIgBwHuFlQQJU2WN0Lc/export?format=csv&gid=705899926';
