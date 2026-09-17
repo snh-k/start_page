@@ -93,9 +93,14 @@
 
         .ma-checkbox-group { display: flex; gap: 20px; justify-content: flex-end; align-items: center; }
         .ma-checkbox { cursor: pointer; width: 13px; height: 13px; margin: 0; }
+        
+        /* 마영전 임무 리스트 체크박스 컬러 설정 (내부 흰색이 되도록 3,4,6p 색상 톤다운) */
         .ma-checkbox.idx-0 { accent-color: #ff4d4f; }
         .ma-checkbox.idx-1 { accent-color: #1890ff; }
-        .ma-checkbox.idx-2 { accent-color: #389e0d; }
+        .ma-checkbox.idx-2 { accent-color: #237804; } /* 3p: 어두운 초록 */
+        .ma-checkbox.idx-3 { accent-color: #ad4e00; } /* 4p: 어두운 오렌지/갈색 */
+        .ma-checkbox.idx-4 { accent-color: #722ed1; }
+        .ma-checkbox.idx-5 { accent-color: #006d75; } /* 6p: 어두운 청록 */
 
         .queue-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
         .queue-item span.done { text-decoration: line-through; opacity: 0.4; color: #888; transition: all 0.2s; }
@@ -204,10 +209,14 @@
         .block-span-4 { grid-column: 1 / span 4; }
         .block-span-2 { grid-column: span 2; } 
 
+        /* 마영전 임무 리스트와 동일한 색상 적용 */
         .citadel-radio.idx-0 { accent-color: #ff4d4f; }
         .citadel-radio.idx-1 { accent-color: #1890ff; }
-        .citadel-radio.idx-2 { accent-color: #389e0d; }
-        .citadel-radio.idx-3 { accent-color: #fa8c16; } 
+        .citadel-radio.idx-2 { accent-color: #73d13d} 
+        .citadel-radio.idx-3 { accent-color: #ad4e00; } 
+        .citadel-radio.idx-4 { accent-color: #722ed1; } 
+        .citadel-radio.idx-5 { accent-color: #006d75; } 
+        
         .citadel-grid { display: grid; grid-template-columns: repeat(25, minmax(22px, 1fr)); width: 100%; align-items: stretch; }
         .citadel-cell { min-height: 30px; display: flex; align-items: center; justify-content: center; color: var(--text-color); box-sizing: border-box; }
         .citadel-header-cell { font-size: 0.82rem; font-weight: 700; background: var(--link-bg); border-bottom: 1px solid var(--border-color); }
@@ -231,6 +240,7 @@
     <button id="btn-calendar-tab" class="side-btn" onclick="switchTab('calendar-tab')"><span class="icon">📅</span><span class="text">달력</span></button>
     <button id="btn-vindic-tab" class="side-btn" onclick="switchTab('vindic-tab')"><span class="icon">⚔️</span><span class="text">마영전</span></button>
     <button id="btn-memo" class="side-btn" onclick="switchTab('memo')"><span class="icon">📝</span><span class="text">메모</span></button>
+    <button id="btn-settings-tab" class="side-btn" onclick="switchTab('settings-tab')"><span class="icon">⚙️</span><span class="text">설정</span></button>
     <button id="theme-toggle-btn" class="side-btn theme-toggle" onclick="toggleTheme()">
         <b id="theme-icon">🌙</b><span id="theme-text" class="text">다크 모드</span>
     </button>
@@ -292,7 +302,7 @@
             <div class="category-box">
                 <div class="category-title">🛠️ 유틸리티</div>
                 <ul class="link-list grid-2">
-                    <li class="link-item"><a href="https://search.naver.com/search.naver?query=암사동 날씨" target="_blank">☀️ 암사동 날씨</a></li>
+                    <li class="link-item"><a id="weather-link" href="https://search.naver.com/search.naver?query=암사동 날씨" target="_blank">☀️ 암사동 날씨</a></li>
                     <li class="link-item"><a href="https://cleanair.seoul.go.kr/?area=111274&type=pm25" target="_blank"><img src="https://www.google.com/s2/favicons?domain=cleanair.seoul.go.kr">대기환경정보</a></li>
                     <li class="link-item"><a href="https://search.naver.com/search.naver?query=달력" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com">네이버 달력</a></li>
                     <li class="link-item"><a href="https://map.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=map.naver.com">네이버 지도</a></li>
@@ -376,10 +386,14 @@
             <div class="category-box">
                 <div class="category-title">🛒 쇼핑 & 이벤트</div>
                 <ul class="link-list grid-2">
-                    <li class="link-item coupang-link"><a href="https://www.coupang.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupang.com">쿠팡</a></li>
-                    <li class="link-item gmarket-link"><a href="https://www.gmarket.co.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓</a></li>
-                    <li class="link-item ali-link full-row"><a href="https://ko.aliexpress.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com">알리익스프레스</a></li>
-
+                    <li class="link-item"><a href="https://www.coupang.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupang.com">쿠팡</a></li>
+                    <li class="link-item"><a href="https://www.11st.co.kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=11st.co.kr">11번가</a></li>
+                    <li class="link-item full-row"><a href="https://shopping.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com">네이버+ 스토어</a></li>
+                    <li class="link-item full-row"><a href="https://www.aliexpress.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com">알리익스프레스</a></li>
+                    <li class="link-item"><a href="https://www.gmarket.co.kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">G마켓</a></li>
+                    <li class="link-item"><a href="https://www.auction.co.kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=auction.co.kr">옥션</a></li>
+                    <li class="link-item"><a href="https://www.kurly.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=kurly.com">컬리</a></li>
+                    <li class="link-item"><a href="https://www.ssg.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=ssg.com">SSG닷컴</a></li>
                 </ul>
             </div>
         </div>
@@ -569,24 +583,84 @@
             <div id="memo-status" class="save-status">자동 저장됨</div>
         </div>
     </div>
+
+    <!-- 설정 탭 -->
+    <div id="settings-tab" class="tab-content">
+        <div class="category-box" style="width: 100%; max-width: 800px; margin: 0 auto 20px auto;">
+            <div class="category-title">⚙️ 설정</div>
+            
+            <!-- 백업 및 복원 -->
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">💾 데이터 백업 및 복원</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 12px; line-height: 1.4;">
+                    저장해둔 메모, 즐겨찾기, 체크리스트, 달력 일정, 설정 값을 백업 파일(.json)로 저장하거나 백업 파일로부터 복원합니다. 브라우저 캐시를 삭제해도 백업 파일이 있으면 언제든 복구할 수 있습니다.
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="add-btn" style="width: auto; padding: 9px 18px; margin-bottom: 0;" onclick="exportBackup()">데이터 백업 다운로드</button>
+                    <button class="add-btn" style="width: auto; padding: 9px 18px; margin-bottom: 0; background-color: #52c41a;" onclick="document.getElementById('import-file-input').click()">데이터 복원하기</button>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importBackup(event)">
+                </div>
+            </div>
+
+            <!-- 마영전 캐릭터 수 설정 -->
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">⚔️ 마영전 캐릭터 수 설정</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 12px; line-height: 1.4;">
+                    '마영전 임무 리스트' 및 '그림자의 성채' 블록에 표시할 캐릭터 수를 설정합니다.
+                </p>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="font-size: 0.9rem; font-weight: bold;">캐릭터 수:</label>
+                    <input type="number" id="vindic-user-count-input" class="custom-input" style="width: 100px; margin-bottom: 0;" min="1" max="6" value="3">
+                    <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="saveVindicUserCount()">저장</button>
+                </div>
+            </div>
+
+            <!-- 날씨 설정 -->
+            <div style="margin-bottom: 10px;">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">☀️ 유틸리티 날씨 검색 설정</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 12px; line-height: 1.4;">
+                    '유틸리티' 블록에 표시될 날씨 링크의 이름과 클릭 시 검색될 실제 네이버 검색어를 설정합니다.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px; max-width: 400px;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px;">링크 표시 이름</label>
+                        <input type="text" id="weather-link-text-input" class="custom-input" style="margin-bottom: 0;" placeholder="예: 암사동 날씨">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px;">실제 검색 키워드</label>
+                        <input type="text" id="weather-search-query-input" class="custom-input" style="margin-bottom: 0;" placeholder="예: 암사동 날씨">
+                    </div>
+                    <div>
+                        <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="saveWeatherSettings()">날씨 설정 저장</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 <script>
-    const MAX_CHECKBOXES = 3; 
     const ALL_TASKS = [
         '기사단', '붉은 달의 기운', '레이드', '출정 허가증', '일일 미션', 
         '그림자의 성채', '결사대', '시공간 왜곡', '스페셜 던전', '길드 던전', '미혹의 탑'
     ];
 
-    // 입력 요소에 커서가 없을 때 단축키로 탭 이동 (순서 업데이트됨)
+    function getMaxCheckboxes() {
+        const val = parseInt(localStorage.getItem('vindic_user_count') || '3', 10);
+        return isNaN(val) || val < 1 ? 3 : val;
+    }
+
+    // 입력 요소에 커서가 없을 때 단축키로 탭 이동
     window.addEventListener('keydown', (e) => {
         if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
         
         if (e.key === '1') switchTab('home');
-        else if (e.key === '2') switchTab('checklist-tab'); // 새로 추가된 체크리스트
+        else if (e.key === '2') switchTab('checklist-tab'); 
         else if (e.key === '3') switchTab('calendar-tab');
         else if (e.key === '4') switchTab('vindic-tab');
         else if (e.key === '5') switchTab('memo');
+        else if (e.key === '0') switchTab('settings-tab'); // 단축키 6에서 0으로 변경
     });
 
     function checkMaTasks() {
@@ -595,10 +669,22 @@
         const lastDate = lastCheck ? new Date(lastCheck) : new Date(0);
         const targetToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0);
 
+        const maxCb = getMaxCheckboxes();
         let maQueue = JSON.parse(localStorage.getItem('ma_queue_final')); 
         if (!maQueue || maQueue.length !== ALL_TASKS.length) {
-            maQueue = ALL_TASKS.map(task => ({ text: task, doneStates: new Array(MAX_CHECKBOXES).fill(false) }));
+            maQueue = ALL_TASKS.map(task => ({ text: task, doneStates: new Array(maxCb).fill(false) }));
         }
+
+        // 캐릭터 수가 변경되었을 때 doneStates 배열 길이 맞춤 조정
+        maQueue = maQueue.map(item => {
+            let states = Array.isArray(item.doneStates) ? item.doneStates : [];
+            if (states.length < maxCb) {
+                while (states.length < maxCb) states.push(false);
+            } else if (states.length > maxCb) {
+                states = states.slice(0, maxCb);
+            }
+            return { ...item, doneStates: states };
+        });
 
         if (lastDate < targetToday && now >= targetToday) {
             maQueue = maQueue.map(item => {
@@ -608,7 +694,7 @@
                 if (dailyTasks.includes(item.text)) shouldReset = true;
                 if (weeklyTasks.includes(item.text) && now.getDay() === 4 && now.getHours() >= 9) shouldReset = true;
                 if (item.text === '미혹의 탑' && now.getDate() === 1 && now.getHours() >= 9) shouldReset = true;
-                return shouldReset ? { ...item, doneStates: new Array(MAX_CHECKBOXES).fill(false) } : item;
+                return shouldReset ? { ...item, doneStates: new Array(maxCb).fill(false) } : item;
             });
             localStorage.setItem('last_ma_auto_check', now.toISOString());
         }
@@ -617,16 +703,19 @@
     }
 
     function renderMaQueue() {
+        const maxCb = getMaxCheckboxes();
         const items = JSON.parse(localStorage.getItem('ma_queue_final') || '[]');
         const listDiv = document.getElementById('ma-queue-list');
         if (!listDiv) return;
         listDiv.innerHTML = items.map((item, tIdx) => {
             let cbHtml = `<div class="ma-checkbox-group">`;
-            for (let i = 0; i < MAX_CHECKBOXES; i++) {
-                cbHtml += `<input type="checkbox" class="ma-checkbox idx-${i}" ${item.doneStates[i] ? 'checked' : ''} onclick="toggleMaQueue(${tIdx}, ${i})">`;
+            for (let i = 0; i < maxCb; i++) {
+                const checked = item.doneStates && item.doneStates[i] ? 'checked' : '';
+                cbHtml += `<input type="checkbox" class="ma-checkbox idx-${i}" ${checked} onclick="toggleMaQueue(${tIdx}, ${i})">`;
             }
             cbHtml += `</div>`;
-            return `<div class="queue-item"><span class="${item.doneStates.every(s => s) ? 'done' : ''}">${item.text}</span>${cbHtml}</div>`;
+            const allDone = item.doneStates && item.doneStates.slice(0, maxCb).every(s => s);
+            return `<div class="queue-item"><span class="${allDone ? 'done' : ''}">${item.text}</span>${cbHtml}</div>`;
         }).join('');
     }
 
@@ -641,6 +730,7 @@
         const container = document.getElementById('citadel-container');
         if (!container) return;
 
+        const maxCb = getMaxCheckboxes();
         const GRADES = [
             'F', 
             'C6', 'C5', 'C4', 'C3', 'C2', 'C1', 
@@ -656,7 +746,7 @@
 
         GRADES.forEach(g => { html += `<div class="citadel-cell citadel-header-cell${boundaryClass(g)}">${g}</div>`; });
 
-        for (let charIdx = 0; charIdx < MAX_CHECKBOXES; charIdx++) {
+        for (let charIdx = 0; charIdx < maxCb; charIdx++) {
             const currentGrade = savedGrades[charIdx] || 'F';
             GRADES.forEach(g => {
                 const isChecked = currentGrade === g ? 'checked' : '';
@@ -682,8 +772,14 @@
         document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         
-        // 새로 추가된 checklist-tab 맵핑
-        const btnMap = { 'home': 'btn-home', 'checklist-tab': 'btn-checklist-tab', 'calendar-tab': 'btn-calendar-tab', 'vindic-tab': 'btn-vindic-tab', 'memo': 'btn-memo' };
+        const btnMap = { 
+            'home': 'btn-home', 
+            'checklist-tab': 'btn-checklist-tab', 
+            'calendar-tab': 'btn-calendar-tab', 
+            'vindic-tab': 'btn-vindic-tab', 
+            'memo': 'btn-memo',
+            'settings-tab': 'btn-settings-tab'
+        };
         const btnId = btnMap[tabId] || 'btn-home';
         document.getElementById(btnId).classList.add('active');
     }
@@ -1133,6 +1229,105 @@
         document.getElementById(containerId).innerHTML = html;
     }
 
+    // --- 설정 전용 JS 기능 로직 ---
+    function saveVindicUserCount() {
+        const input = document.getElementById('vindic-user-count-input');
+        let count = parseInt(input.value, 10);
+        if (isNaN(count) || count < 1) count = 1;
+        if (count > 6) count = 6;
+        
+        localStorage.setItem('vindic_user_count', count.toString());
+        checkMaTasks();
+        renderShadowCitadel();
+        alert(`캐릭터 수가 ${count}개로 저장되었습니다.`);
+    }
+
+    function saveWeatherSettings() {
+        const text = document.getElementById('weather-link-text-input').value.trim() || '암사동 날씨';
+        const query = document.getElementById('weather-search-query-input').value.trim() || '암사동 날씨';
+        
+        localStorage.setItem('weather_link_text', text);
+        localStorage.setItem('weather_search_query', query);
+        
+        updateWeatherLink();
+        alert('날씨 설정이 저장되었습니다.');
+    }
+
+    function updateWeatherLink() {
+        const text = localStorage.getItem('weather_link_text') || '암사동 날씨';
+        const query = localStorage.getItem('weather_search_query') || '암사동 날씨';
+        
+        const weatherElem = document.getElementById('weather-link');
+        if (weatherElem) {
+            weatherElem.innerHTML = `☀️ ${text}`;
+            weatherElem.href = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`;
+        }
+        
+        const textInput = document.getElementById('weather-link-text-input');
+        const queryInput = document.getElementById('weather-search-query-input');
+        if (textInput && queryInput) {
+            textInput.value = text;
+            queryInput.value = query;
+        }
+    }
+
+    function exportBackup() {
+        const data = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            data[key] = localStorage.getItem(key);
+        }
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const todayStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `startpage_backup_${todayStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (typeof data !== 'object' || data === null) {
+                    alert('올바르지 않은 백업 파일 형식입니다.');
+                    return;
+                }
+                if (confirm('현재 저장된 모든 데이터가 백업 파일의 데이터로 대체됩니다. 복원하시겠습니까?')) {
+                    localStorage.clear();
+                    for (const key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            localStorage.setItem(key, data[key]);
+                        }
+                    }
+                    alert('복원이 완료되었습니다. 페이지를 새로고침합니다.');
+                    location.reload();
+                }
+            } catch (err) {
+                alert('백업 파일을 읽는 도중 오류가 발생했습니다: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    function initSettingsUI() {
+        const count = getMaxCheckboxes();
+        const countInput = document.getElementById('vindic-user-count-input');
+        if (countInput) countInput.value = count;
+        
+        updateWeatherLink();
+    }
+
     window.onload = () => {
         const savedTheme = localStorage.getItem('dashboard-theme') || 'light';
         document.body.setAttribute('data-theme', savedTheme);
@@ -1151,7 +1346,8 @@
 
         updateClock(); setInterval(updateClock, 1000);
         
-        // 데이터 불러오기 함수들 실행
+        // 설정 화면 및 연동 데이터 초기화
+        initSettingsUI();
         checkMaTasks(); 
         renderQueue(); 
         renderQueue2(); 
