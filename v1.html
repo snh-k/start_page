@@ -51,19 +51,24 @@
             width: 70px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column; align-items: center; padding-top: 20px;
             position: fixed; height: 100vh; z-index: 1001; transition: width 0.2s;
+            box-sizing: border-box;
         }
         .sidebar:hover { width: 120px; }
         .side-btn {
             width: 50px; height: 50px; margin-bottom: 15px; border: none; border-radius: 12px;
             background: var(--border-color); cursor: pointer; display: flex; align-items: center;
             justify-content: center; flex-direction: column; transition: all 0.2s; color: var(--text-color);
+            flex-shrink: 0;
         }
         .side-btn span.icon { font-size: 18px; display: block; }
         .side-btn span.text { font-size: 11px; font-weight: 600; margin-top: 2px; display: none; }
         .sidebar:hover .side-btn { width: 100px; }
         .sidebar:hover .side-btn span.text { display: block; }
         .side-btn.active { background: var(--accent-color); color: white; }
-        .theme-toggle { margin-top: auto; margin-bottom: 30px; background: #3e3e3f; color: #ffca28; }
+        
+        /* 0번 설정 버튼 위치 */
+        #btn-settings-tab { margin-top: auto; margin-bottom: 15px; }
+        .theme-toggle { margin-bottom: 30px; background: #3e3e3f; color: #ffca28; }
 
         /* 메인 콘텐츠 */
         .main-content { flex: 1; margin-left: 70px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -79,7 +84,14 @@
 
         .tab-content { display: none; width: 100%; max-width: 1400px; }
         .tab-content.active { display: block; }
-        .container { column-count: 4; column-gap: 20px; width: 100%; }
+        
+        /* 홈 탭 전용 4열 고정 그리드 및 컬럼 레이아웃 */
+        .container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; align-items: start; }
+        .home-column { display: flex; flex-direction: column; gap: 20px; }
+        .home-column .category-box { margin-bottom: 0; }
+
+        /* 체크리스트 페이지용 4열 그리드 레이아웃 */
+        .checklist-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; align-items: start; }
 
         .category-box {
             background: var(--card-bg); border-radius: 12px; padding: 18px;
@@ -90,9 +102,55 @@
 
         .ma-checkbox-group { display: flex; gap: 20px; justify-content: flex-end; align-items: center; }
         .ma-checkbox { cursor: pointer; width: 13px; height: 13px; margin: 0; }
+        
+        /* 마영전 임무 리스트 체크박스 컬러 설정 */
         .ma-checkbox.idx-0 { accent-color: #ff4d4f; }
         .ma-checkbox.idx-1 { accent-color: #1890ff; }
-        .ma-checkbox.idx-2 { accent-color: #389e0d; }
+        .ma-checkbox.idx-2 { accent-color: #237804; }
+        .ma-checkbox.idx-3 { accent-color: #ad4e00; }
+        .ma-checkbox.idx-4 { accent-color: #722ed1; }
+        .ma-checkbox.idx-5 { accent-color: #006d75; }
+
+        /* 결사대 전용 3단계 상태 버튼: 빈 상태 → 1 → 2 → 빈 상태 */
+        .ma-state-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 13px;
+            height: 13px;
+            min-width: 13px;
+            min-height: 13px;
+            padding: 0;
+            margin: 0;
+            border: 1px solid #767676;
+            border-radius: 2px;
+            background: var(--card-bg);
+            color: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 12px;
+            box-sizing: border-box;
+        }
+        .ma-state-number {
+            position: relative;
+            top: 1px;
+        }
+        .ma-state-checkbox.state-1,
+        .ma-state-checkbox.state-2 {
+            background: var(--ma-color);
+            border-color: var(--ma-color);
+            color: white;
+        }
+        .ma-state-checkbox.idx-0 { --ma-color: #ff4d4f; }
+        .ma-state-checkbox.idx-1 { --ma-color: #1890ff; }
+        .ma-state-checkbox.idx-2 { --ma-color: #237804; }
+        .ma-state-checkbox.idx-3 { --ma-color: #ad4e00; }
+        .ma-state-checkbox.idx-4 { --ma-color: #722ed1; }
+        .ma-state-checkbox.idx-5 { --ma-color: #006d75; }
+        [data-theme='dark'] .ma-state-checkbox { border-color: #888; }
 
         .queue-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-color); font-size: 0.85rem; }
         .queue-item span.done { text-decoration: line-through; opacity: 0.4; color: #888; transition: all 0.2s; }
@@ -102,13 +160,111 @@
 
         .custom-input { width: 100%; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; background: var(--bg-color); color: var(--text-color); box-sizing: border-box; margin-bottom: 8px; outline: none; font-size: 0.85rem; }
         .add-btn { width: 100%; padding: 8px; background: var(--accent-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 10px; }
+        
+        /* 링크 버튼 스타일 및 고정 크기 설정 */
         .link-list { list-style: none; padding: 0; margin: 0; }
-        .link-list.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 5px; row-gap: 0px; }
-        .link-item { display: flex; align-items: center; margin-bottom: 5px; }
-        .link-item a { flex: 1; text-decoration: none; color: var(--text-color); display: flex; align-items: center; padding: 7px 10px; border-radius: 8px; background: var(--link-bg); font-size: 0.9rem; transition: 0.2s; }
-        .link-item img { width: 16px; height: 16px; margin-right: 10px; }
-        .link-item a:hover { background: #007aff22; transform: translateX(5px); }
-        .del-btn { margin-left: 5px; color: #ff4d4f; border: none; background: none; cursor: pointer; font-weight: bold; opacity: 0.2; }
+        .link-list.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 6px; row-gap: 6px; }
+        .full-row { grid-column: span 2; }
+        .link-item { display: flex; align-items: center; margin-bottom: 5px; min-width: 0; }
+        .link-list.grid-2 .link-item { margin-bottom: 0; }
+
+        /* 홈 고정 링크와 사용자 지정 링크 사이의 구분 여백 */
+        .custom-home-link-list { margin-top: 6px; }
+
+        /* 설정 화면 사용자 링크 순서 변경용 */
+        .block-link-sort-item { position: relative; }
+        .block-link-drag-handle {
+            width: 22px;
+            height: 30px;
+            margin-right: 4px;
+            border: none;
+            background: transparent;
+            color: #888;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 15px;
+            line-height: 1;
+            user-select: none;
+            touch-action: none;
+        }
+        .block-link-drag-handle:hover { color: var(--text-color); }
+        .block-link-drag-handle:active { cursor: grabbing; }
+        .block-link-sort-item.dragging { opacity: 0.45; }
+        .block-link-sort-item.drag-over {
+            outline: 2px dashed var(--accent-color);
+            outline-offset: -2px;
+            border-radius: 8px;
+        }
+        .block-link-sort-actions {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: 4px;
+            flex-shrink: 0;
+        }
+        .block-link-sort-btn {
+            width: 22px;
+            height: 24px;
+            padding: 0;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 1;
+            opacity: 0.45;
+            transition: all 0.15s;
+        }
+        .block-link-sort-item:hover .block-link-sort-btn:not(:disabled) { opacity: 1; }
+        .block-link-sort-btn:hover:not(:disabled) {
+            background: var(--link-bg);
+            border-color: var(--accent-color);
+        }
+        .block-link-sort-btn:disabled {
+            opacity: 0.15;
+            cursor: default;
+        }
+        .block-link-sort-item .del-btn { margin-left: 4px; }
+        
+        .link-item a { 
+            flex: 1; 
+            height: 36px;
+            text-decoration: none; 
+            color: var(--text-color); 
+            display: flex; 
+            align-items: center; 
+            padding: 0 10px; 
+            border-radius: 8px; 
+            background: var(--link-bg); 
+            font-size: 0.88rem; 
+            transition: background 0.2s; 
+            box-sizing: border-box;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .link-item img { width: 16px; height: 16px; margin-right: 8px; flex-shrink: 0; }
+        .link-item a:hover { background: #007aff22; }
+        
+        /* Marquee(텍스트 자동 좌우 이동) 스타일 레퍼 */
+        .link-text-wrap {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            display: block;
+            position: relative;
+            min-width: 0;
+        }
+        .link-text {
+            display: inline-block;
+            white-space: nowrap;
+            will-change: transform;
+        }
+
+        .del-btn { margin-left: 5px; color: #ff4d4f; border: none; background: none; cursor: pointer; font-weight: bold; opacity: 0.2; flex-shrink: 0; }
         .link-item:hover .del-btn, .queue-item:hover .del-btn { opacity: 1; }
 
         .memo-area { width: 100%; height: calc(100vh - 250px); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; font-size: 1rem; background: var(--memo-bg); color: var(--text-color); resize: none; outline: none; box-sizing: border-box; font-family: inherit; }
@@ -120,12 +276,14 @@
         .row-span-2 { grid-row: span 2; }
 
         @media (max-width: 1200px) {
+            .container { grid-template-columns: 1fr; }
             .vindic-container { grid-template-columns: 1fr; }
+            .checklist-container { grid-template-columns: 1fr; }
             .block-span-4, .block-span-2 { grid-column: span 1; }
             .row-span-2 { grid-row: span 1; }
         }
 
-        /* --- 달력 전용 CSS --- */
+        /* 달력 전용 CSS */
         .calendar-page-container { 
             display: flex; gap: 20px; width: 100%; 
             height: calc(100vh - 137px); 
@@ -190,7 +348,7 @@
         .cal-memo-item.done { text-decoration: line-through; opacity: 0.4; }
         .cal-memo-item.more { color: #888; font-weight: bold; font-size: 0.75rem; margin-top: 1px; }
 
-        /* --- 마영전 전용 CSS --- */
+        /* 마영전 전용 CSS */
         .inside-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: center; }
         .inside-table th, .inside-table td { padding: 8px 4px; border-bottom: 1px solid var(--border-color); color: var(--text-color); white-space: nowrap; }
         .inside-table th { background-color: var(--link-bg); font-weight: bold; }
@@ -201,19 +359,17 @@
 
         .citadel-radio.idx-0 { accent-color: #ff4d4f; }
         .citadel-radio.idx-1 { accent-color: #1890ff; }
-        .citadel-radio.idx-2 { accent-color: #389e0d; }
-        .citadel-radio.idx-3 { accent-color: #fa8c16; } 
+        .citadel-radio.idx-2 { accent-color: #237804; }
+        .citadel-radio.idx-3 { accent-color: #ad4e00; } 
+        .citadel-radio.idx-4 { accent-color: #722ed1; } 
+        .citadel-radio.idx-5 { accent-color: #006d75; } 
+        
         .citadel-grid { display: grid; grid-template-columns: repeat(25, minmax(22px, 1fr)); width: 100%; align-items: stretch; }
         .citadel-cell { min-height: 30px; display: flex; align-items: center; justify-content: center; color: var(--text-color); box-sizing: border-box; }
         .citadel-header-cell { font-size: 0.82rem; font-weight: 700; background: var(--link-bg); border-bottom: 1px solid var(--border-color); }
         .citadel-radio-cell { cursor: pointer; }
         .citadel-radio-cell input { margin: 0; cursor: pointer; }
         .citadel-boundary { border-left: 1px solid #ccc; }
-
-        @media (max-width: 1200px) {
-            .vindic-container { grid-template-columns: 1fr; }
-            .block-span-4, .block-span-2 { grid-column: span 1; }
-        }
 
         #raid-table-container table tbody tr:not(.empty-row):hover,
         #connection-table-container table tbody tr:not(.empty-row):hover,
@@ -227,9 +383,12 @@
 
 <div class="sidebar">
     <button id="btn-home" class="side-btn active" onclick="switchTab('home')"><span class="icon">🏠</span><span class="text">홈</span></button>
+    <button id="btn-checklist-tab" class="side-btn" onclick="switchTab('checklist-tab')"><span class="icon">✅</span><span class="text">체크리스트</span></button>
     <button id="btn-calendar-tab" class="side-btn" onclick="switchTab('calendar-tab')"><span class="icon">📅</span><span class="text">달력</span></button>
     <button id="btn-vindic-tab" class="side-btn" onclick="switchTab('vindic-tab')"><span class="icon">⚔️</span><span class="text">마영전</span></button>
     <button id="btn-memo" class="side-btn" onclick="switchTab('memo')"><span class="icon">📝</span><span class="text">메모</span></button>
+    
+    <button id="btn-settings-tab" class="side-btn" onclick="switchTab('settings-tab')"><span class="icon">⚙️</span><span class="text">설정</span></button>
     <button id="theme-toggle-btn" class="side-btn theme-toggle" onclick="toggleTheme()">
         <b id="theme-icon">🌙</b><span id="theme-text" class="text">다크 모드</span>
     </button>
@@ -260,119 +419,184 @@
 
     <div id="home" class="tab-content active">
         <div class="container">
-            <div class="category-box">
-                <div class="category-title">🌐 메인 포털</div>
-                <ul class="link-list grid-2">
-                    <li class="link-item"><a href="https://www.google.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com">구글</a></li>
-                    <li class="link-item"><a href="https://www.youtube.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=youtube.com">유튜브</a></li>
-                    <li class="link-item"><a href="https://www.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com">네이버</a></li>
-                </ul>
+            <!-- 1열: 메인 포털 및 하위 블록 -->
+            <div class="home-column">
+                <div class="category-box">
+                    <div class="category-title">🌐 메인 포털</div>
+                    <ul class="link-list grid-2">
+                        <li class="link-item"><a href="https://www.google.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com"><span class="link-text-wrap"><span class="link-text">구글</span></span></a></li>
+                        <li class="link-item"><a href="https://www.youtube.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=youtube.com"><span class="link-text-wrap"><span class="link-text">유튜브</span></span></a></li>
+                        <li class="link-item"><a href="https://www.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com"><span class="link-text-wrap"><span class="link-text">네이버</span></span></a></li>
+                    </ul>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">🤖 AI 도구</div>
+                    <ul class="link-list grid-2">
+                        <li class="link-item"><a href="https://gemini.google.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gemini.google.com"><span class="link-text-wrap"><span class="link-text">제미나이</span></span></a></li>
+                        <li class="link-item"><a href="https://chatgpt.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=chatgpt.com"><span class="link-text-wrap"><span class="link-text">ChatGPT</span></span></a></li>
+                        <li class="link-item"><a href="https://grok.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=grok.com"><span class="link-text-wrap"><span class="link-text">그록 (Grok)</span></span></a></li>
+                        <li class="link-item"><a href="https://claude.ai/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=claude.ai"><span class="link-text-wrap"><span class="link-text">Claude</span></span></a></li>
+                    </ul>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">📊 금융 & 투자</div>
+                    <ul class="link-list grid-2">
+                        <li class="link-item"><a href="https://www.google.com/finance/portfolio/watchlist" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com"><span class="link-text-wrap"><span class="link-text">구글 금융</span></span></a></li>
+                        <li class="link-item"><a href="https://kr.investing.com/currencies/usd-krw" target="_blank"><img src="https://www.google.com/s2/favicons?domain=investing.com"><span class="link-text-wrap"><span class="link-text">원/달러 환율</span></span></a></li>
+                        <!-- <li class="link-item full-row"><a href="https://www.fmkorea.com/index.php?mid=stock&category=2997204381" target="_blank"><img src="https://www.google.com/s2/favicons?domain=fmkorea.com"><span class="link-text-wrap"><span class="link-text">에펨코리아 (해외주식)</span></span></a></li> -->
+                    </ul>
+                    <!-- 동적 추가되는 금융 사용자 링크 -->
+                    <ul id="home-custom-finance-list" class="link-list grid-2 custom-home-link-list"></ul>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">🛠️ 유틸리티</div>
+                    <ul class="link-list grid-2">
+                        <li class="link-item"><a id="weather-link" href="https://search.naver.com/search.naver?query=암사동 날씨" target="_blank">☀️ <span class="link-text-wrap"><span class="link-text">암사동 날씨</span></span></a></li>
+                        <li class="link-item"><a id="air-link" href="https://cleanair.seoul.go.kr/?area=111274&type=pm25" target="_blank"><img src="https://www.google.com/s2/favicons?domain=cleanair.seoul.go.kr"><span class="link-text-wrap"><span class="link-text" id="air-link-text">대기환경정보</span></span></a></li>
+                        <li class="link-item"><a href="https://search.naver.com/search.naver?query=달력" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com"><span class="link-text-wrap"><span class="link-text">네이버 달력</span></span></a></li>
+                        <li class="link-item"><a href="https://map.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=map.naver.com"><span class="link-text-wrap"><span class="link-text">네이버 지도</span></span></a></li>
+                        <li class="link-item"><a href="https://www.google.com/imghp?hl=ko" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com"><span class="link-text-wrap"><span class="link-text">구글 이미지</span></span></a></li>
+                    </ul>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">👥 커뮤니티</div>
+                    <ul class="link-list">
+                        <!-- <li class="link-item"> ~~ </span></span></a></li> -->
+                    </ul>
+                    <!-- 동적 추가되는 커뮤니티 사용자 링크 -->
+                    <ul id="home-custom-community-list" class="link-list custom-home-link-list"></ul>
+                </div>
             </div>
 
-            <div class="category-box">
-                <div class="category-title">🤖 AI 도구</div>
-                <ul class="link-list grid-2">
-                    <li class="link-item"><a href="https://gemini.google.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gemini.google.com">제미나이</a></li>
-                    <li class="link-item"><a href="https://chatgpt.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=chatgpt.com">ChatGPT</a></li>
-                    <li class="link-item"><a href="https://grok.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=grok.com">그록 (Grok)</a></li>
-                    <li class="link-item"><a href="https://claude.ai/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=claude.ai">Claude</a></li>
-                </ul>
+            <!-- 2열: 게임 커뮤니티 및 하위 블록 -->
+            <div class="home-column">
+                <div class="category-box">
+                    <div class="category-title">🎮 게임 커뮤니티</div>
+                    <ul class="link-list">
+                        <li class="link-item heroes-link"><a href="https://heroes.nexon.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=nexon.com"><span class="link-text-wrap"><span class="link-text">마비노기 영웅전 공식 홈페이지</span></span></a></li>
+                        <li class="link-item"><a href="https://heroes.inven.co.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=inven.co.kr"><span class="link-text-wrap"><span class="link-text">마비노기 영웅전 인벤</span></span></a></li>
+                        <li class="link-item"><a href="https://gall.dcinside.com/mgallery/board/lists/?id=vindic" target="_blank"><img src="https://www.google.com/s2/favicons?domain=dcinside.com"><span class="link-text-wrap"><span class="link-text">마비노기 영웅전 에린 갤러리</span></span></a></li>
+                        <li class="link-item"><a href="https://arca.live/b/mabinogiheroes" target="_blank"><img src="https://www.google.com/s2/favicons?domain=arca.live"><span class="link-text-wrap"><span class="link-text">마비노기 영웅전 채널</span></span></a></li>
+                    </ul>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">🛠️ 마영전 유틸리티</div>
+                    <ul class="link-list grid-2">
+                        <li class="link-item full-row"><a href="https://openapi.nexon.com/my-application/191730/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=nexon.com"><span class="link-text-wrap"><span class="link-text">Nexon Open API</span></span></a></li>
+                        <li class="link-item full-row"><a href="https://eunsokoo.github.io/heroes-character/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=github.io"><span class="link-text-wrap"><span class="link-text">캐릭터 조회 (eunsokoo)</span></span></a></li>
+                        <li class="link-item"><a href="https://xn--le5bt1s.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=xn--le5bt1s.com"><span class="link-text-wrap"><span class="link-text">키안닷컴</span></span></a></li>
+                        <li class="link-item"><a href="https://www.heroes-dev.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=heroes-dev.com"><span class="link-text-wrap"><span class="link-text">망스비</span></span></a></li>
+                        <li class="link-item"><a href="https://mangbung.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=mangbung.com"><span class="link-text-wrap"><span class="link-text">망붕닷컴</span></span></a></li>
+                        <li class="link-item"><a href="https://mabiheroes.gg/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=mabiheroes.gg"><span class="link-text-wrap"><span class="link-text">마영지지</span></span></a></li>
+                        <li class="link-item"><a href="https://heroes.ko-dex.com/" target="_blank"><img src="https://icons.duckduckgo.com/ip3/heroes.ko-dex.com.ico"><span class="link-text-wrap"><span class="link-text">Heroes Kodex</span></span></a></li>
+                        <li class="link-item"><a href="https://www.mhon.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=mhon.kr"><span class="link-text-wrap"><span class="link-text">ON.KR</span></span></a></li>
+                    </ul>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">🎬 OTT & 스트리밍</div>
+                    <ul class="link-list grid-2">
+                        <li class="link-item"><a href="https://www.netflix.com/kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=netflix.com"><span class="link-text-wrap"><span class="link-text">넷플릭스</span></span></a></li>
+                        <li class="link-item"><a href="https://www.coupangplay.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupangplay.com"><span class="link-text-wrap"><span class="link-text">쿠팡플레이</span></span></a></li>
+                        <li class="link-item"><a href="https://www.tving.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=tving.com"><span class="link-text-wrap"><span class="link-text">티빙</span></span></a></li>
+                        <li class="link-item"><a href="https://www.wavve.com/" target="_blank"><img src="https://www.wavve.com/favicon.ico"><span class="link-text-wrap"><span class="link-text">웨이브</span></span></a></li>
+                        <li class="link-item"><a href="https://www.disneyplus.com/ko-kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=disneyplus.com"><span class="link-text-wrap"><span class="link-text">디즈니+</span></span></a></li>
+                        <li class="link-item"><a href="https://www.laftel.net/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=laftel.net&sz=32"><span class="link-text-wrap"><span class="link-text">라프텔</span></span></a></li>
+                        <li class="link-item"><a href="https://watcha.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=watcha.com"><span class="link-text-wrap"><span class="link-text">왓챠</span></span></a></li>
+                        <li class="link-item"><a href="https://tv.apple.com/kr" target="_blank"><img src="https://tv.apple.com/favicon.ico"><span class="link-text-wrap"><span class="link-text">Apple TV</span></span></a></li>
+                    </ul>
+                    <!-- 동적 추가되는 OTT 사용자 링크 -->
+                    <ul id="home-custom-ott-list" class="link-list grid-2 custom-home-link-list"></ul>
+                </div>
             </div>
 
-            <div class="category-box">
-                <div class="category-title">📊 금융 & 투자</div>
-                <ul class="link-list">
-                    <li class="link-item"><a href="https://www.google.com/finance/portfolio/watchlist" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com">구글 금융</a></li>
-                    <li class="link-item"><a href="https://kr.investing.com/currencies/usd-krw" target="_blank"><img src="https://www.google.com/s2/favicons?domain=investing.com">원/달러 환율</a></li>
-                </ul>
+            <!-- 3열: 즐겨찾기 및 하위 블록 -->
+            <div class="home-column">
+                <div class="category-box">
+                    <div class="category-title">⭐ 즐겨찾기</div>
+                    <input type="text" id="link-name" class="custom-input" placeholder="사이트 이름">
+                    <input type="text" id="link-url" class="custom-input" placeholder="https://..." onkeypress="if(event.keyCode==13) addCustomLink()">
+                    <button class="add-btn" onclick="addCustomLink()">추가하기</button>
+                    <ul id="custom-link-list" class="link-list" style="border-top:1px solid var(--border-color); padding-top:10px;"></ul>
+                </div>
+
+                <div class="category-box">
+                    <div class="category-title">
+                        <span>✅ 체크리스트</span>
+                        <button onclick="uncheckAllQueue()" style="font-size: 0.75rem; padding: 3px 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--link-bg); color: var(--text-color); cursor: pointer; font-weight: 500; transition: 0.2s;">선택 해제</button>
+                    </div>
+                    <input type="text" id="queue-input" class="custom-input" placeholder="할 일 입력..." onkeypress="if(event.keyCode==13) addQueue()">
+                    <div id="queue-list"></div>
+                </div>
             </div>
 
-            <div class="category-box">
-                <div class="category-title">🛠️ 유틸리티</div>
-                <ul class="link-list grid-2">
-                    <li class="link-item"><a href="https://search.naver.com/search.naver?query=암사동 날씨" target="_blank">☀️ 암사동 날씨</a></li>
-                    <li class="link-item"><a href="https://cleanair.seoul.go.kr/?area=111274&type=pm25" target="_blank"><img src="https://www.google.com/s2/favicons?domain=cleanair.seoul.go.kr">대기환경정보</a></li>
-                    <li class="link-item"><a href="https://search.naver.com/search.naver?query=달력" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com">네이버 달력</a></li>
-                    <li class="link-item"><a href="https://map.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=map.naver.com">네이버 지도</a></li>
-                    <li class="link-item"><a href="https://www.google.com/imghp?hl=ko" target="_blank"><img src="https://www.google.com/s2/favicons?domain=google.com">구글 이미지</a></li>
-                </ul>
-            </div>
+            <!-- 4열: 마영전 임무 리스트 및 하위 블록 -->
+            <div class="home-column">
+                <div class="category-box">
+                    <div class="category-title">⚔️ 마영전 임무 리스트</div>
+                    <div id="ma-queue-list"></div>
+                    <div style="font-size: 0.75rem; color: #888; margin-top: 10px; text-align: right;">오전 9시 초기화</div>
+                </div>
 
-            <div class="category-box">
-                <div class="category-title">👥 커뮤니티</div>
-                <ul class="link-list">
-                    <li class="link-item"><a href="https://www" target="_blank"><img src="https://www.google.com/s2/favicons?domain=">test</a></li>
-                </ul>
+                <div class="category-box">
+                    <div class="category-title">🛒 쇼핑 & 이벤트</div>
+                    <ul class="link-list grid-2">
+                        <li class="link-item"><a href="https://www.coupang.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupang.com"><span class="link-text-wrap"><span class="link-text">쿠팡</span></span></a></li>
+                        <li class="link-item"><a href="https://www.11st.co.kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=11st.co.kr"><span class="link-text-wrap"><span class="link-text">11번가</span></span></a></li>
+                        <li class="link-item"><a href="https://shopping.naver.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=naver.com"><span class="link-text-wrap"><span class="link-text">네이버+ 스토어</span></span></a></li>
+                        <li class="link-item"><a href="https://www.aliexpress.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com"><span class="link-text-wrap"><span class="link-text">알리익스프레스</span></span></a></li>
+                        <!-- <li class="link-item full-row"><a href="https://www.aliexpress.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com"><span class="link-text-wrap"><span class="link-text">알리익스프레스</span></span></a></li> -->
+                        <li class="link-item"><a href="https://www.gmarket.co.kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr"><span class="link-text-wrap"><span class="link-text">G마켓</span></span></a></li>
+                        <li class="link-item"><a href="https://www.auction.co.kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=auction.co.kr"><span class="link-text-wrap"><span class="link-text">옥션</span></span></a></li>
+                        <li class="link-item"><a href="https://www.kurly.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=kurly.com"><span class="link-text-wrap"><span class="link-text">컬리</span></span></a></li>
+                        <li class="link-item"><a href="https://www.ssg.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=ssg.com"><span class="link-text-wrap"><span class="link-text">SSG닷컴</span></span></a></li>
+                    </ul>
+                    <!-- 동적 추가되는 쇼핑 사용자 링크 -->
+                    <ul id="home-custom-shopping-list" class="link-list grid-2 custom-home-link-list"></ul>
+                </div>
             </div>
+        </div>
+    </div>
 
+    <div id="checklist-tab" class="tab-content">
+        <div class="checklist-container">
             <div class="category-box">
-                <div class="category-title">🎮 게임 커뮤니티</div>
-                <ul class="link-list">
-                    <li class="link-item heroes-link"><a href="https://heroes.nexon.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=nexon.com">마비노기 영웅전 공식 홈페이지</a></li>
-                    <li class="link-item"><a href="https://heroes.inven.co.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=inven.co.kr">마비노기 영웅전 인벤</a></li>
-                    <li class="link-item"><a href="https://gall.dcinside.com/mgallery/board/lists/?id=vindic" target="_blank"><img src="https://www.google.com/s2/favicons?domain=dcinside.com">마비노기 영웅전 에린 갤러리</a></li>
-                    <li class="link-item"><a href="https://arca.live/b/mabinogiheroes" target="_blank"><img src="https://www.google.com/s2/favicons?domain=arca.live">마비노기 영웅전 채널</a></li>
-                </ul>
-            </div>
-
-            <div class="category-box">
-                <div class="category-title">🛠️ 마영전 유틸리티</div>
-                <ul class="link-list">
-                    <li class="link-item"><a href="https://openapi.nexon.com/my-application/191730/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=nexon.com">Nexon Open API</a></li>
-                    <li class="link-item"><a href="https://eunsokoo.github.io/heroes-character/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=github.io">캐릭터 조회 (eunsokoo)</a></li>
-                    <li class="link-item"><a href="https://xn--le5bt1s.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=xn--le5bt1s.com">키안닷컴</a></li>
-                    <li class="link-item"><a href="https://www.heroes-dev.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=heroes-dev.com">망스비</a></li>
-                    <li class="link-item"><a href="https://mangbung.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=mangbung.com">망붕닷컴</a></li>
-                    <li class="link-item"><a href="https://mabiheroes.gg/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=mabiheroes.gg">마영지지</a></li>
-                    <li class="link-item"><a href="https://heroes.ko-dex.com/" target="_blank"><img src="https://icons.duckduckgo.com/ip3/heroes.ko-dex.com.ico">Heroes Kodex</a></li>
-                    <li class="link-item"><a href="https://www.mhon.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=mhon.kr">ON.KR</a></li>
-                </ul>
-            </div>
-
-            <div class="category-box">
-                <div class="category-title">🎬 OTT & 스트리밍</div>
-                <ul class="link-list grid-2">
-                    <li class="link-item"><a href="https://www.netflix.com/kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=netflix.com">넷플릭스</a></li>
-                    <li class="link-item"><a href="https://www.coupangplay.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupangplay.com">쿠팡플레이</a></li>
-                    <li class="link-item"><a href="https://www.tving.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=tving.com">티빙</a></li>
-                    <li class="link-item"><a href="https://www.wavve.com/" target="_blank"><img src="https://www.wavve.com/favicon.ico">웨이브</a></li>
-                    <li class="link-item"><a href="https://www.disneyplus.com/ko-kr" target="_blank"><img src="https://www.google.com/s2/favicons?domain=disneyplus.com">디즈니+</a></li>
-                    <li class="link-item"><a href="https://www.laftel.net/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=laftel.net&sz=32">라프텔</a></li>
-                    <li class="link-item"><a href="https://watcha.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=watcha.com">왓챠</a></li>
-                    <li class="link-item"><a href="https://tv.apple.com/kr" target="_blank"><img src="https://tv.apple.com/favicon.ico">Apple TV</a></li>
-                </ul>
-            </div>
-
-            <div class="category-box">
-                <div class="category-title">⭐ 즐겨찾기</div>
-                <input type="text" id="link-name" class="custom-input" placeholder="사이트 이름">
-                <input type="text" id="link-url" class="custom-input" placeholder="https://..." onkeypress="if(event.keyCode==13) addCustomLink()">
-                <button class="add-btn" onclick="addCustomLink()">추가하기</button>
-                <ul id="custom-link-list" class="link-list" style="border-top:1px solid var(--border-color); padding-top:10px;"></ul>
+                <div class="category-title">
+                    <span>✅ 체크리스트</span>
+                    <button onclick="uncheckAllQueue2()" style="font-size: 0.75rem; padding: 3px 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--link-bg); color: var(--text-color); cursor: pointer; font-weight: 500; transition: 0.2s;">선택 해제</button>
+                </div>
+                <input type="text" id="queue-input2" class="custom-input" placeholder="할 일 입력..." onkeypress="if(event.keyCode==13) addQueue2()">
+                <div id="queue-list2"></div>
             </div>
 
             <div class="category-box">
                 <div class="category-title">
                     <span>✅ 체크리스트</span>
-                    <button onclick="uncheckAllQueue()" style="font-size: 0.75rem; padding: 3px 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--link-bg); color: var(--text-color); cursor: pointer; font-weight: 500; transition: 0.2s;">선택 해제</button>
+                    <button onclick="uncheckAllQueue3()" style="font-size: 0.75rem; padding: 3px 8px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--link-bg); color: var(--text-color); cursor: pointer; font-weight: 500; transition: 0.2s;">선택 해제</button>
                 </div>
-                <input type="text" id="queue-input" class="custom-input" placeholder="할 일 입력..." onkeypress="if(event.keyCode==13) addQueue()">
-                <div id="queue-list"></div>
+                <input type="text" id="queue-input3" class="custom-input" placeholder="할 일 입력..." onkeypress="if(event.keyCode==13) addQueue3()">
+                <div id="queue-list3"></div>
             </div>
 
             <div class="category-box">
-                <div class="category-title">⚔️ 마영전 임무 리스트</div>
-                <div id="ma-queue-list"></div>
-                <div style="font-size: 0.75rem; color: #888; margin-top: 10px; text-align: right;">오전 9시 초기화</div>
+                <div class="category-title">⭐ 즐겨찾기</div>
+                <input type="text" id="link-name2" class="custom-input" placeholder="사이트 이름">
+                <input type="text" id="link-url2" class="custom-input" placeholder="https://..." onkeypress="if(event.keyCode==13) addCustomLink2()">
+                <button class="add-btn" onclick="addCustomLink2()">추가하기</button>
+                <ul id="custom-link-list2" class="link-list" style="border-top:1px solid var(--border-color); padding-top:10px;"></ul>
             </div>
 
             <div class="category-box">
-                <div class="category-title">🛒 쇼핑 & 이벤트</div>
-                <ul class="link-list">
-                    <li class="link-item coupang-link"><a href="https://www.coupang.com" target="_blank"><img src="https://www.google.com/s2/favicons?domain=coupang.com">쿠팡</a></li>
-                    <li class="link-item ali-link"><a href="https://ko.aliexpress.com/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=aliexpress.com">알리익스프레스</a></li>
-                    <li class="link-item gmarket-link"><a href="https://www.gmarket.co.kr/" target="_blank"><img src="https://www.google.com/s2/favicons?domain=gmarket.co.kr">지마켓</a></li>
-                </ul>
+                <div class="category-title">⭐ 즐겨찾기</div>
+                <input type="text" id="link-name3" class="custom-input" placeholder="사이트 이름">
+                <input type="text" id="link-url3" class="custom-input" placeholder="https://..." onkeypress="if(event.keyCode==13) addCustomLink3()">
+                <button class="add-btn" onclick="addCustomLink3()">추가하기</button>
+                <ul id="custom-link-list3" class="link-list" style="border-top:1px solid var(--border-color); padding-top:10px;"></ul>
             </div>
         </div>
     </div>
@@ -391,7 +615,7 @@
                     <div id="quick-picker">
                         <select id="pick-year" style="padding:8px; border-radius:6px;"></select>
                         <select id="pick-month" style="padding:8px; border-radius:6px;">
-                            <option value="0">1월</option><option value="1">2월</option><option value="2">3월</option><option value="3">4월</option><option value="5">5월</option><option value="5">6월</option><option value="6">7월</option><option value="7">8월</option><option value="8">9월</option><option value="9">10월</option><option value="10">11월</option><option value="11">12월</option>
+                            <option value="0">1월</option><option value="1">2월</option><option value="2">3월</option><option value="3">4월</option><option value="4">5월</option><option value="5">6월</option><option value="6">7월</option><option value="8">8월</option><option value="9">9월</option><option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
                         </select>
                         <button class="cal-nav" onclick="applyQuickPicker()">이동</button>
                     </div>
@@ -523,23 +747,180 @@
             <div id="memo-status" class="save-status">자동 저장됨</div>
         </div>
     </div>
+
+    <!-- 설정 탭 -->
+    <div id="settings-tab" class="tab-content">
+        <div class="category-box" style="width: 100%; max-width: 800px; margin: 0 auto 20px auto;">
+            <div class="category-title">⚙️ 설정</div>
+            
+            <!-- 저장 위치 및 캐시 관련 설명 문구 -->
+            <div style="background: var(--link-bg); border: 1px solid var(--accent-color); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; font-size: 0.85rem; line-height: 1.6; color: var(--text-color);">
+                ℹ️ <strong>데이터 저장 및 보관 안내</strong><br>
+                입력된 모든 설정과 링크 데이터는 **사용자 자신의 컴퓨터(브라우저 캐시 및 LocalStorage)**에 저장됩니다. 서버에 저장되는 것이 아니기 때문에 사용자 본인에게만 보여집니다.<br>
+                브라우저 캐시나 방문 기록을 삭제하면 저장된 값이 사라질 수 있으므로, <u>캐시를 지우기 전에 아래 [데이터 백업 다운로드]를 받아두시기 바랍니다.</u>
+            </div>
+
+            <!-- 백업 및 복원 -->
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">💾 데이터 백업 및 복원</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 12px; line-height: 1.4;">
+                    저장해둔 메모, 즐겨찾기, 체크리스트, 달력 일정, 설정 값, 사용자 블록 링크를 백업 파일(.json)로 저장하거나 백업 파일로부터 복원합니다.
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="add-btn" style="width: auto; padding: 9px 18px; margin-bottom: 0;" onclick="exportBackup()">데이터 백업 다운로드</button>
+                    <button class="add-btn" style="width: auto; padding: 9px 18px; margin-bottom: 0; background-color: #52c41a;" onclick="document.getElementById('import-file-input').click()">데이터 복원하기</button>
+                    <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importBackup(event)">
+                </div>
+            </div>
+
+            <!-- 블록별 사용자 링크 관리 -->
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">🔗 메인 블록 사용자 링크 설정</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 15px; line-height: 1.4;">
+                    홈 화면의 각 카테고리 블록에 나만의 링크를 추가합니다. 추가된 링크는 메인 화면에 기존 스타일 그대로 표시되며, 순서는 ☷ 드래그 또는 ↑↓ 버튼으로 변경할 수 있습니다.
+                </p>
+
+                <!-- 🎬 OTT & 스트리밍 -->
+                <div style="margin-bottom: 15px; background: var(--link-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.88rem;">🎬 OTT & 스트리밍 링크 추가</h4>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input type="text" id="ott-link-name" class="custom-input" style="margin-bottom: 0; flex: 1;" placeholder="사이트 이름">
+                        <input type="text" id="ott-link-url" class="custom-input" style="margin-bottom: 0; flex: 2;" placeholder="https://..." onkeypress="if(event.keyCode==13) addBlockLink('custom_ott_links', 'ott-link-name', 'ott-link-url', 'settings-ott-list', 'home-custom-ott-list')">
+                        <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="addBlockLink('custom_ott_links', 'ott-link-name', 'ott-link-url', 'settings-ott-list', 'home-custom-ott-list')">추가</button>
+                    </div>
+                    <ul id="settings-ott-list" class="link-list grid-2"></ul>
+                </div>
+
+                <!-- 👥 커뮤니티 -->
+                <div style="margin-bottom: 15px; background: var(--link-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.88rem;">👥 커뮤니티 링크 추가</h4>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input type="text" id="community-link-name" class="custom-input" style="margin-bottom: 0; flex: 1;" placeholder="사이트 이름">
+                        <input type="text" id="community-link-url" class="custom-input" style="margin-bottom: 0; flex: 2;" placeholder="https://..." onkeypress="if(event.keyCode==13) addBlockLink('custom_community_links', 'community-link-name', 'community-link-url', 'settings-community-list', 'home-custom-community-list')">
+                        <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="addBlockLink('custom_community_links', 'community-link-name', 'community-link-url', 'settings-community-list', 'home-custom-community-list')">추가</button>
+                    </div>
+                    <ul id="settings-community-list" class="link-list"></ul>
+                </div>
+
+                <!-- 📊 금융 & 투자 -->
+                <div style="margin-bottom: 15px; background: var(--link-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.88rem;">📊 금융 & 투자 링크 추가</h4>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input type="text" id="finance-link-name" class="custom-input" style="margin-bottom: 0; flex: 1;" placeholder="사이트 이름">
+                        <input type="text" id="finance-link-url" class="custom-input" style="margin-bottom: 0; flex: 2;" placeholder="https://..." onkeypress="if(event.keyCode==13) addBlockLink('custom_finance_links', 'finance-link-name', 'finance-link-url', 'settings-finance-list', 'home-custom-finance-list')">
+                        <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="addBlockLink('custom_finance_links', 'finance-link-name', 'finance-link-url', 'settings-finance-list', 'home-custom-finance-list')">추가</button>
+                    </div>
+                    <ul id="settings-finance-list" class="link-list grid-2"></ul>
+                </div>
+
+                <!-- 🛒 쇼핑 & 이벤트 -->
+                <div style="margin-bottom: 0; background: var(--link-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <h4 style="margin: 0 0 8px 0; font-size: 0.88rem;">🛒 쇼핑 & 이벤트 링크 추가</h4>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input type="text" id="shopping-link-name" class="custom-input" style="margin-bottom: 0; flex: 1;" placeholder="사이트 이름">
+                        <input type="text" id="shopping-link-url" class="custom-input" style="margin-bottom: 0; flex: 2;" placeholder="https://..." onkeypress="if(event.keyCode==13) addBlockLink('custom_shopping_links', 'shopping-link-name', 'shopping-link-url', 'settings-shopping-list', 'home-custom-shopping-list')">
+                        <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="addBlockLink('custom_shopping_links', 'shopping-link-name', 'shopping-link-url', 'settings-shopping-list', 'home-custom-shopping-list')">추가</button>
+                    </div>
+                    <ul id="settings-shopping-list" class="link-list grid-2"></ul>
+                </div>
+            </div>
+
+            <!-- 마영전 캐릭터 수 설정 -->
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">⚔️ 마영전 캐릭터 수 설정</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 12px; line-height: 1.4;">
+                    '마영전 임무 리스트' 및 '그림자의 성채' 블록에 표시할 캐릭터 수를 설정합니다(입력 범위: 1~6).
+                </p>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="font-size: 0.9rem; font-weight: bold;">캐릭터 수:</label>
+                    <input type="number" id="vindic-user-count-input" class="custom-input" style="width: 100px; margin-bottom: 0;" min="1" max="6" value="3">
+                    <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="saveVindicUserCount()">저장</button>
+                </div>
+            </div>
+
+            <!-- 날씨 설정 -->
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">☀️ 유틸리티 날씨 검색 설정</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 12px; line-height: 1.4;">
+                    '유틸리티' 블록에 표시될 날씨 링크의 이름과 클릭 시 검색될 실제 네이버 검색어를 설정합니다.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px; max-width: 400px;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px;">링크 표시 이름</label>
+                        <input type="text" id="weather-link-text-input" class="custom-input" style="margin-bottom: 0;" placeholder="예: 암사동 날씨">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px;">실제 검색 키워드</label>
+                        <input type="text" id="weather-search-query-input" class="custom-input" style="margin-bottom: 0;" placeholder="예: 암사동 날씨">
+                    </div>
+                    <div>
+                        <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="saveWeatherSettings()">날씨 설정 저장</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 대기환경정보 설정 -->
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color);">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">🌫️ 대기환경정보 링크 설정</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 12px; line-height: 1.4;">
+                    '유틸리티' 블록에 표시될 대기환경정보 링크의 이름과 클릭 시 바로 이동할 웹 주소(URL)를 설정합니다.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 12px; max-width: 400px;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px;">링크 표시 이름</label>
+                        <input type="text" id="air-link-text-input" class="custom-input" style="margin-bottom: 0;" placeholder="예: 대기환경정보">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: bold; display: block; margin-bottom: 5px;">이동할 웹 주소 (URL)</label>
+                        <input type="text" id="air-link-url-input" class="custom-input" style="margin-bottom: 0;" placeholder="https://...">
+                    </div>
+                    <div>
+                        <button class="add-btn" style="width: auto; padding: 8px 16px; margin-bottom: 0;" onclick="saveAirSettings()">대기환경정보 설정 저장</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 단축키 안내 -->
+            <div style="margin-bottom: 10px;">
+                <h3 style="font-size: 1rem; margin-top: 5px; margin-bottom: 8px;">⌨️ 키보드 단축키 안내</h3>
+                <p style="font-size: 0.85rem; color: #888; margin-bottom: 12px; line-height: 1.4;">
+                    입력창(검색창, 메모 등)에 커서가 있지 않은 상태에서 숫자키를 누르면 해당 페이지로 즉시 이동합니다.
+                </p>
+                <ul style="font-size: 0.85rem; line-height: 1.8; color: var(--text-color); padding-left: 20px; margin: 0;">
+                    <li><strong>1</strong> : 홈 (Home)</li>
+                    <li><strong>2</strong> : 체크리스트</li>
+                    <li><strong>3</strong> : 달력</li>
+                    <li><strong>4</strong> : 마영전</li>
+                    <li><strong>5</strong> : 메모</li>
+                    <li><strong>0</strong> : 설정</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 <script>
-    const MAX_CHECKBOXES = 3; 
     const ALL_TASKS = [
         '기사단', '붉은 달의 기운', '레이드', '출정 허가증', '일일 미션', 
         '그림자의 성채', '결사대', '시공간 왜곡', '스페셜 던전', '길드 던전', '미혹의 탑'
     ];
 
-    // 입력 요소에 커서가 없을 때 1, 2, 3, 4 키로 탭 이동
+    function getMaxCheckboxes() {
+        const val = parseInt(localStorage.getItem('vindic_user_count') || '3', 10);
+        return isNaN(val) || val < 1 ? 3 : val;
+    }
+
+    // 입력 요소에 커서가 없을 때 단축키로 탭 이동
     window.addEventListener('keydown', (e) => {
         if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
         
         if (e.key === '1') switchTab('home');
-        else if (e.key === '2') switchTab('calendar-tab');
-        else if (e.key === '3') switchTab('vindic-tab');
-        else if (e.key === '4') switchTab('memo');
+        else if (e.key === '2') switchTab('checklist-tab'); 
+        else if (e.key === '3') switchTab('calendar-tab');
+        else if (e.key === '4') switchTab('vindic-tab');
+        else if (e.key === '5') switchTab('memo');
+        else if (e.key === '0') switchTab('settings-tab');
     });
 
     function checkMaTasks() {
@@ -548,10 +929,31 @@
         const lastDate = lastCheck ? new Date(lastCheck) : new Date(0);
         const targetToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0);
 
+        const maxCb = getMaxCheckboxes();
         let maQueue = JSON.parse(localStorage.getItem('ma_queue_final')); 
         if (!maQueue || maQueue.length !== ALL_TASKS.length) {
-            maQueue = ALL_TASKS.map(task => ({ text: task, doneStates: new Array(MAX_CHECKBOXES).fill(false) }));
+            maQueue = ALL_TASKS.map(task => ({ text: task, doneStates: new Array(maxCb).fill(false) }));
         }
+
+        maQueue = maQueue.map(item => {
+            let states = Array.isArray(item.doneStates) ? item.doneStates : [];
+            if (states.length < maxCb) {
+                while (states.length < maxCb) states.push(false);
+            } else if (states.length > maxCb) {
+                states = states.slice(0, maxCb);
+            }
+
+            // 결사대만 기존 true/false 값도 유지할 수 있도록 0/1/2 상태로 정규화
+            if (item.text === '결사대') {
+                states = states.map(state => {
+                    if (state === true) return 1;
+                    const num = Number(state);
+                    return num === 1 || num === 2 ? num : 0;
+                });
+            }
+
+            return { ...item, doneStates: states };
+        });
 
         if (lastDate < targetToday && now >= targetToday) {
             maQueue = maQueue.map(item => {
@@ -561,7 +963,7 @@
                 if (dailyTasks.includes(item.text)) shouldReset = true;
                 if (weeklyTasks.includes(item.text) && now.getDay() === 4 && now.getHours() >= 9) shouldReset = true;
                 if (item.text === '미혹의 탑' && now.getDate() === 1 && now.getHours() >= 9) shouldReset = true;
-                return shouldReset ? { ...item, doneStates: new Array(MAX_CHECKBOXES).fill(false) } : item;
+                return shouldReset ? { ...item, doneStates: new Array(maxCb).fill(false) } : item;
             });
             localStorage.setItem('last_ma_auto_check', now.toISOString());
         }
@@ -570,22 +972,38 @@
     }
 
     function renderMaQueue() {
+        const maxCb = getMaxCheckboxes();
         const items = JSON.parse(localStorage.getItem('ma_queue_final') || '[]');
         const listDiv = document.getElementById('ma-queue-list');
         if (!listDiv) return;
         listDiv.innerHTML = items.map((item, tIdx) => {
             let cbHtml = `<div class="ma-checkbox-group">`;
-            for (let i = 0; i < MAX_CHECKBOXES; i++) {
-                cbHtml += `<input type="checkbox" class="ma-checkbox idx-${i}" ${item.doneStates[i] ? 'checked' : ''} onclick="toggleMaQueue(${tIdx}, ${i})">`;
+            for (let i = 0; i < maxCb; i++) {
+                if (item.text === '결사대') {
+                    const rawState = item.doneStates && item.doneStates[i];
+                    const state = rawState === true ? 1 : ((rawState === 1 || rawState === 2) ? rawState : 0);
+                    const stateClass = state > 0 ? ` state-${state}` : '';
+                    cbHtml += `<button type="button" tabindex="-1" class="ma-checkbox ma-state-checkbox idx-${i}${stateClass}" aria-label="결사대 ${state}" onmousedown="event.preventDefault()" onclick="toggleMaQueue(${tIdx}, ${i})"><span class="ma-state-number">${state > 0 ? state : ''}</span></button>`;
+                } else {
+                    const checked = item.doneStates && item.doneStates[i] ? 'checked' : '';
+                    cbHtml += `<input type="checkbox" class="ma-checkbox idx-${i}" ${checked} onclick="toggleMaQueue(${tIdx}, ${i})">`;
+                }
             }
             cbHtml += `</div>`;
-            return `<div class="queue-item"><span class="${item.doneStates.every(s => s) ? 'done' : ''}">${item.text}</span>${cbHtml}</div>`;
+            const allDone = item.doneStates && item.doneStates.slice(0, maxCb).every(s => s);
+            return `<div class="queue-item"><span class="${allDone ? 'done' : ''}">${item.text}</span>${cbHtml}</div>`;
         }).join('');
     }
 
     function toggleMaQueue(tIdx, cIdx) {
         const items = JSON.parse(localStorage.getItem('ma_queue_final'));
-        items[tIdx].doneStates[cIdx] = !items[tIdx].doneStates[cIdx];
+        if (items[tIdx].text === '결사대') {
+            const current = items[tIdx].doneStates[cIdx];
+            const state = current === true ? 1 : (current === 1 || current === 2 ? current : 0);
+            items[tIdx].doneStates[cIdx] = (state + 1) % 3;
+        } else {
+            items[tIdx].doneStates[cIdx] = !items[tIdx].doneStates[cIdx];
+        }
         localStorage.setItem('ma_queue_final', JSON.stringify(items));
         renderMaQueue();
     }
@@ -594,6 +1012,7 @@
         const container = document.getElementById('citadel-container');
         if (!container) return;
 
+        const maxCb = getMaxCheckboxes();
         const GRADES = [
             'F', 
             'C6', 'C5', 'C4', 'C3', 'C2', 'C1', 
@@ -609,7 +1028,7 @@
 
         GRADES.forEach(g => { html += `<div class="citadel-cell citadel-header-cell${boundaryClass(g)}">${g}</div>`; });
 
-        for (let charIdx = 0; charIdx < MAX_CHECKBOXES; charIdx++) {
+        for (let charIdx = 0; charIdx < maxCb; charIdx++) {
             const currentGrade = savedGrades[charIdx] || 'F';
             GRADES.forEach(g => {
                 const isChecked = currentGrade === g ? 'checked' : '';
@@ -635,7 +1054,14 @@
         document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         
-        const btnMap = { 'home': 'btn-home', 'calendar-tab': 'btn-calendar-tab', 'vindic-tab': 'btn-vindic-tab', 'memo': 'btn-memo' };
+        const btnMap = { 
+            'home': 'btn-home', 
+            'checklist-tab': 'btn-checklist-tab', 
+            'calendar-tab': 'btn-calendar-tab', 
+            'vindic-tab': 'btn-vindic-tab', 
+            'memo': 'btn-memo',
+            'settings-tab': 'btn-settings-tab'
+        };
         const btnId = btnMap[tabId] || 'btn-home';
         document.getElementById(btnId).classList.add('active');
     }
@@ -678,6 +1104,225 @@
         document.getElementById('realtime-clock').innerText = `${dateText} ${dayName} ${timeText} (${weekKorean})`;
     }
 
+    /* --- 마우스 호버 시 텍스트 이동(Marquee) 애니메이션 스크립트 --- */
+    function setupMarqueeEffect() {
+        document.addEventListener('mouseover', function(e) {
+            const link = e.target.closest('.link-item a');
+            if (!link) return;
+            const textEl = link.querySelector('.link-text');
+            const wrapEl = link.querySelector('.link-text-wrap');
+            if (!textEl || !wrapEl) return;
+            
+            const overflow = textEl.scrollWidth - wrapEl.clientWidth;
+            if (overflow > 1) {
+                const duration = Math.max(1.2, overflow / 35);
+                textEl.style.transition = `transform ${duration}s linear`;
+                textEl.style.transform = `translateX(-${overflow + 4}px)`;
+            }
+        });
+
+        document.addEventListener('mouseout', function(e) {
+            const link = e.target.closest('.link-item a');
+            if (!link) return;
+            const textEl = link.querySelector('.link-text');
+            if (!textEl) return;
+            
+            textEl.style.transition = 'transform 0.25s ease-out';
+            textEl.style.transform = 'translateX(0)';
+        });
+    }
+
+    /* --- 블록별 커스텀 사용자 링크 추가/삭제/순서변경 공통 로직 --- */
+    let draggedBlockLink = null;
+
+    function getBlockLinkUrlData(link) {
+        let domain = "";
+        try {
+            const tempUrl = link.url.includes('://') ? link.url : 'https://' + link.url;
+            domain = new URL(tempUrl).hostname;
+        } catch(e) {
+            domain = "";
+        }
+
+        const finalUrl = link.url.includes('://') ? link.url : 'https://' + link.url;
+        return { domain, finalUrl };
+    }
+
+    function renderBlockLinks(key, listIdInSettings, listIdInHome) {
+        const links = JSON.parse(localStorage.getItem(key) || '[]');
+
+        // 1. 홈 화면 목록 (통합 렌더링)
+        const homeEl = document.getElementById(listIdInHome);
+        if (homeEl) {
+            homeEl.innerHTML = links.map(link => {
+                const { domain, finalUrl } = getBlockLinkUrlData(link);
+
+                return `
+                    <li class="link-item">
+                        <a href="${finalUrl}" target="_blank">
+                            <img src="https://${domain}/favicon.ico" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?domain=${domain}';">
+                            <span class="link-text-wrap"><span class="link-text">${link.name}</span></span>
+                        </a>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        // 2. 설정 화면 목록 (삭제 + 위/아래 + 드래그 정렬)
+        const settingsEl = document.getElementById(listIdInSettings);
+        if (settingsEl) {
+            settingsEl.innerHTML = links.map((link, i) => {
+                const { domain, finalUrl } = getBlockLinkUrlData(link);
+
+                return `
+                    <li class="link-item block-link-sort-item"
+                        data-index="${i}"
+                        ondragover="allowBlockLinkDrop(event)"
+                        ondrop="dropBlockLink(event, '${key}', ${i}, '${listIdInSettings}', '${listIdInHome}')"
+                        ondragleave="clearBlockLinkDragOver(this)">
+                        <span class="block-link-drag-handle"
+                              draggable="true"
+                              title="드래그하여 순서 변경"
+                              ondragstart="startBlockLinkDrag(event, '${key}', ${i})"
+                              ondragend="endBlockLinkDrag(event)">☷</span>
+                        <a href="${finalUrl}" target="_blank">
+                            <img src="https://${domain}/favicon.ico" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?domain=${domain}';">
+                            <span class="link-text-wrap"><span class="link-text">${link.name}</span></span>
+                        </a>
+                        <span class="block-link-sort-actions">
+                            <button class="block-link-sort-btn"
+                                    title="위로 이동"
+                                    ${i === 0 ? 'disabled' : ''}
+                                    onclick="moveBlockLink('${key}', ${i}, -1, '${listIdInSettings}', '${listIdInHome}')">↑</button>
+                            <button class="block-link-sort-btn"
+                                    title="아래로 이동"
+                                    ${i === links.length - 1 ? 'disabled' : ''}
+                                    onclick="moveBlockLink('${key}', ${i}, 1, '${listIdInSettings}', '${listIdInHome}')">↓</button>
+                        </span>
+                        <button class="del-btn"
+                                title="삭제"
+                                onclick="removeBlockLink('${key}', ${i}, '${listIdInSettings}', '${listIdInHome}')">×</button>
+                    </li>
+                `;
+            }).join('');
+        }
+    }
+
+    function startBlockLinkDrag(event, key, index) {
+        draggedBlockLink = { key, index };
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', `${key}:${index}`);
+
+        const item = event.target.closest('.block-link-sort-item');
+        if (item) {
+            item.classList.add('dragging');
+            setTimeout(() => {
+                if (item.isConnected) item.classList.add('dragging');
+            }, 0);
+        }
+    }
+
+    function allowBlockLinkDrop(event) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+
+        const target = event.currentTarget;
+        if (target.classList.contains('block-link-sort-item')) {
+            target.classList.add('drag-over');
+        }
+    }
+
+    function clearBlockLinkDragOver(element) {
+        element.classList.remove('drag-over');
+    }
+
+    function endBlockLinkDrag(event) {
+        const item = event.target.closest('.block-link-sort-item');
+        if (item) item.classList.remove('dragging');
+
+        document.querySelectorAll('.block-link-sort-item.drag-over, .block-link-sort-item.dragging')
+            .forEach(el => el.classList.remove('drag-over', 'dragging'));
+
+        draggedBlockLink = null;
+    }
+
+    function dropBlockLink(event, key, targetIndex, listIdInSettings, listIdInHome) {
+        event.preventDefault();
+
+        const targetItem = event.currentTarget;
+        targetItem.classList.remove('drag-over');
+
+        if (!draggedBlockLink || draggedBlockLink.key !== key) {
+            endBlockLinkDrag(event);
+            return;
+        }
+
+        const sourceIndex = draggedBlockLink.index;
+        if (sourceIndex === targetIndex) {
+            endBlockLinkDrag(event);
+            return;
+        }
+
+        const links = JSON.parse(localStorage.getItem(key) || '[]');
+        if (sourceIndex < 0 || sourceIndex >= links.length ||
+            targetIndex < 0 || targetIndex >= links.length) {
+            endBlockLinkDrag(event);
+            return;
+        }
+
+        const [moved] = links.splice(sourceIndex, 1);
+        const insertIndex = sourceIndex < targetIndex ? targetIndex - 1 : targetIndex;
+        links.splice(insertIndex, 0, moved);
+
+        localStorage.setItem(key, JSON.stringify(links));
+        draggedBlockLink = null;
+        renderBlockLinks(key, listIdInSettings, listIdInHome);
+    }
+
+    function moveBlockLink(key, index, direction, listIdInSettings, listIdInHome) {
+        const links = JSON.parse(localStorage.getItem(key) || '[]');
+        const newIndex = index + direction;
+
+        if (index < 0 || index >= links.length || newIndex < 0 || newIndex >= links.length) {
+            return;
+        }
+
+        [links[index], links[newIndex]] = [links[newIndex], links[index]];
+        localStorage.setItem(key, JSON.stringify(links));
+        renderBlockLinks(key, listIdInSettings, listIdInHome);
+    }
+
+    function addBlockLink(key, nameInputId, urlInputId, listIdInSettings, listIdInHome) {
+        const nameEl = document.getElementById(nameInputId);
+        const urlEl = document.getElementById(urlInputId);
+        const name = nameEl.value.trim();
+        const url = urlEl.value.trim();
+        if (!name || !url) return;
+
+        const links = JSON.parse(localStorage.getItem(key) || '[]');
+        links.push({ name, url });
+        localStorage.setItem(key, JSON.stringify(links));
+
+        nameEl.value = '';
+        urlEl.value = '';
+        renderBlockLinks(key, listIdInSettings, listIdInHome);
+    }
+
+    function removeBlockLink(key, index, listIdInSettings, listIdInHome) {
+        const links = JSON.parse(localStorage.getItem(key) || '[]');
+        links.splice(index, 1);
+        localStorage.setItem(key, JSON.stringify(links));
+        renderBlockLinks(key, listIdInSettings, listIdInHome);
+    }
+
+    function renderAllBlockLinks() {
+        renderBlockLinks('custom_ott_links', 'settings-ott-list', 'home-custom-ott-list');
+        renderBlockLinks('custom_community_links', 'settings-community-list', 'home-custom-community-list');
+        renderBlockLinks('custom_finance_links', 'settings-finance-list', 'home-custom-finance-list');
+        renderBlockLinks('custom_shopping_links', 'settings-shopping-list', 'home-custom-shopping-list');
+    }
+
+    // --- 기존 홈 체크리스트 (1) ---
     function renderQueue() {
         const items = JSON.parse(localStorage.getItem('dashboard_queue') || '[]');
         document.getElementById('queue-list').innerHTML = items.map((item, i) => `
@@ -715,6 +1360,83 @@
         renderQueue();
     }
 
+    // --- 새로운 체크리스트 2 ---
+    function renderQueue2() {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue2') || '[]');
+        document.getElementById('queue-list2').innerHTML = items.map((item, i) => `
+            <div class="queue-item">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="ma-checkbox" ${item.done ? 'checked' : ''} onclick="toggleQueue2(${i})">
+                    <span class="${item.done ? 'done' : ''}">${item.text}</span>
+                </div>
+                <button class="del-btn" onclick="removeQueue2(${i})">×</button>
+            </div>
+        `).join('');
+    }
+    function addQueue2() {
+        const val = document.getElementById('queue-input2').value.trim();
+        if(!val) return;
+        const items = JSON.parse(localStorage.getItem('dashboard_queue2') || '[]');
+        items.push({ text: val, done: false });
+        localStorage.setItem('dashboard_queue2', JSON.stringify(items));
+        document.getElementById('queue-input2').value = ''; renderQueue2();
+    }
+    function toggleQueue2(i) {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue2'));
+        items[i].done = !items[i].done;
+        localStorage.setItem('dashboard_queue2', JSON.stringify(items)); renderQueue2();
+    }
+    function removeQueue2(i) {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue2'));
+        items.splice(i, 1);
+        localStorage.setItem('dashboard_queue2', JSON.stringify(items)); renderQueue2();
+    }
+    function uncheckAllQueue2() {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue2') || '[]');
+        items.forEach(item => item.done = false);
+        localStorage.setItem('dashboard_queue2', JSON.stringify(items));
+        renderQueue2();
+    }
+
+    // --- 새로운 체크리스트 3 ---
+    function renderQueue3() {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue3') || '[]');
+        document.getElementById('queue-list3').innerHTML = items.map((item, i) => `
+            <div class="queue-item">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" class="ma-checkbox" ${item.done ? 'checked' : ''} onclick="toggleQueue3(${i})">
+                    <span class="${item.done ? 'done' : ''}">${item.text}</span>
+                </div>
+                <button class="del-btn" onclick="removeQueue3(${i})">×</button>
+            </div>
+        `).join('');
+    }
+    function addQueue3() {
+        const val = document.getElementById('queue-input3').value.trim();
+        if(!val) return;
+        const items = JSON.parse(localStorage.getItem('dashboard_queue3') || '[]');
+        items.push({ text: val, done: false });
+        localStorage.setItem('dashboard_queue3', JSON.stringify(items));
+        document.getElementById('queue-input3').value = ''; renderQueue3();
+    }
+    function toggleQueue3(i) {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue3'));
+        items[i].done = !items[i].done;
+        localStorage.setItem('dashboard_queue3', JSON.stringify(items)); renderQueue3();
+    }
+    function removeQueue3(i) {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue3'));
+        items.splice(i, 1);
+        localStorage.setItem('dashboard_queue3', JSON.stringify(items)); renderQueue3();
+    }
+    function uncheckAllQueue3() {
+        const items = JSON.parse(localStorage.getItem('dashboard_queue3') || '[]');
+        items.forEach(item => item.done = false);
+        localStorage.setItem('dashboard_queue3', JSON.stringify(items));
+        renderQueue3();
+    }
+
+    // --- 기존 홈 즐겨찾기 (1) ---
     function renderCustomLinks() {
         const links = JSON.parse(localStorage.getItem('dashboard_links') || '[]');
         document.getElementById('custom-link-list').innerHTML = links.map((link, i) => {
@@ -725,14 +1447,13 @@
                 <li class="link-item">
                     <a href="${finalUrl}" target="_blank">
                         <img src="https://${domain}/favicon.ico" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?domain=${domain}';">
-                        ${link.name}
+                        <span class="link-text-wrap"><span class="link-text">${link.name}</span></span>
                     </a>
                     <button class="del-btn" onclick="removeLink(${i})">×</button>
                 </li>
             `;
         }).join('');
     }
-
     function addCustomLink() {
         const name = document.getElementById('link-name').value.trim();
         const url = document.getElementById('link-url').value.trim();
@@ -748,11 +1469,112 @@
         localStorage.setItem('dashboard_links', JSON.stringify(links)); renderCustomLinks();
     }
 
+    // --- 새로운 즐겨찾기 2 ---
+    function renderCustomLinks2() {
+        const links = JSON.parse(localStorage.getItem('dashboard_links2') || '[]');
+        document.getElementById('custom-link-list2').innerHTML = links.map((link, i) => {
+            let domain = "";
+            try { const tempUrl = link.url.includes('://') ? link.url : 'https://' + link.url; domain = new URL(tempUrl).hostname; } catch(e) { domain = ""; }
+            const finalUrl = link.url.includes('://') ? link.url : 'https://' + link.url;
+            return `
+                <li class="link-item">
+                    <a href="${finalUrl}" target="_blank">
+                        <img src="https://${domain}/favicon.ico" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?domain=${domain}';">
+                        <span class="link-text-wrap"><span class="link-text">${link.name}</span></span>
+                    </a>
+                    <button class="del-btn" onclick="removeLink2(${i})">×</button>
+                </li>
+            `;
+        }).join('');
+    }
+    function addCustomLink2() {
+        const name = document.getElementById('link-name2').value.trim();
+        const url = document.getElementById('link-url2').value.trim();
+        if(!name || !url) return;
+        const links = JSON.parse(localStorage.getItem('dashboard_links2') || '[]');
+        links.push({ name, url });
+        localStorage.setItem('dashboard_links2', JSON.stringify(links));
+        document.getElementById('link-name2').value = ''; document.getElementById('link-url2').value = ''; renderCustomLinks2();
+    }
+    function removeLink2(i) {
+        const links = JSON.parse(localStorage.getItem('dashboard_links2'));
+        links.splice(i, 1);
+        localStorage.setItem('dashboard_links2', JSON.stringify(links)); renderCustomLinks2();
+    }
+
+    // --- 새로운 즐겨찾기 3 ---
+    function renderCustomLinks3() {
+        const links = JSON.parse(localStorage.getItem('dashboard_links3') || '[]');
+        document.getElementById('custom-link-list3').innerHTML = links.map((link, i) => {
+            let domain = "";
+            try { const tempUrl = link.url.includes('://') ? link.url : 'https://' + link.url; domain = new URL(tempUrl).hostname; } catch(e) { domain = ""; }
+            const finalUrl = link.url.includes('://') ? link.url : 'https://' + link.url;
+            return `
+                <li class="link-item">
+                    <a href="${finalUrl}" target="_blank">
+                        <img src="https://${domain}/favicon.ico" onerror="this.onerror=null; this.src='https://www.google.com/s2/favicons?domain=${domain}';">
+                        <span class="link-text-wrap"><span class="link-text">${link.name}</span></span>
+                    </a>
+                    <button class="del-btn" onclick="removeLink3(${i})">×</button>
+                </li>
+            `;
+        }).join('');
+    }
+    function addCustomLink3() {
+        const name = document.getElementById('link-name3').value.trim();
+        const url = document.getElementById('link-url3').value.trim();
+        if(!name || !url) return;
+        const links = JSON.parse(localStorage.getItem('dashboard_links3') || '[]');
+        links.push({ name, url });
+        localStorage.setItem('dashboard_links3', JSON.stringify(links));
+        document.getElementById('link-name3').value = ''; document.getElementById('link-url3').value = ''; renderCustomLinks3();
+    }
+    function removeLink3(i) {
+        const links = JSON.parse(localStorage.getItem('dashboard_links3'));
+        links.splice(i, 1);
+        localStorage.setItem('dashboard_links3', JSON.stringify(links)); renderCustomLinks3();
+    }
+
     window.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); } });
 
     // --- 달력 로직 ---
     let viewDate = new Date();
     let selectedDateStr = new Date().toLocaleDateString('sv-SE');
+
+    // 공휴일 판별 함수 추가
+    function getHolidayName(dateStr) {
+        const [year, month, day] = dateStr.split('-');
+        const mmdd = `${month}-${day}`;
+        
+        // 매년 고정 공휴일
+        const fixedHolidays = {
+            '01-01': '신정', '03-01': '삼일절', '05-05': '어린이날',
+            '06-06': '현충일', '08-15': '광복절', '10-03': '개천절',
+            '10-09': '한글날', '12-25': '성탄절'
+        };
+        
+        // 유동 공휴일 (설날, 추석, 부처님오신날, 대체공휴일, 선거일 등)
+        const movingHolidays = {
+            '2024-02-09': '설날 연휴', '2024-02-10': '설날', '2024-02-11': '설날 연휴', '2024-02-12': '대체공휴일',
+            '2024-04-10': '국회의원 선거', '2024-05-06': '대체공휴일', '2024-05-15': '부처님오신날',
+            '2024-09-16': '추석 연휴', '2024-09-17': '추석', '2024-09-18': '추석 연휴',
+            
+            '2025-01-28': '설날 연휴', '2025-01-29': '설날', '2025-01-30': '설날 연휴',
+            '2025-03-03': '대체공휴일', '2025-05-05': '어린이날/부처님오신날', '2025-05-06': '대체공휴일',
+            '2025-10-06': '추석 연휴', '2025-10-07': '추석', '2025-10-08': '추석 연휴', '2025-10-09': '한글날',
+            
+            '2026-02-16': '설날 연휴', '2026-02-17': '설날', '2026-02-18': '설날 연휴',
+            '2026-03-02': '대체공휴일', '2026-05-24': '부처님오신날', '2026-05-25': '대체공휴일',
+            '2026-06-03': '전국동시지방선거', '2026-08-17': '대체공휴일',
+            '2026-09-24': '추석 연휴', '2026-09-25': '추석', '2026-09-26': '추석 연휴', '2026-10-05': '대체공휴일',
+            
+            '2027-02-06': '설날 연휴', '2027-02-07': '설날', '2027-02-08': '설날 연휴', '2027-02-09': '대체공휴일',
+            '2027-03-03': '대체공휴일', '2027-05-13': '부처님오신날', '2027-08-16': '대체공휴일',
+            '2027-09-14': '추석 연휴', '2027-09-15': '추석', '2027-09-16': '추석 연휴', '2027-10-11': '대체공휴일'
+        };
+
+        return movingHolidays[dateStr] || fixedHolidays[mmdd] || null;
+    }
 
     function renderCalendar() {
         const year = viewDate.getFullYear();
@@ -782,15 +1604,25 @@
             const isToday = dStr === new Date().toLocaleDateString('sv-SE');
             const isActive = dStr === selectedDateStr;
             const dayIdx = dateObj.getDay();
-            const colorCls = dayIdx === 0 ? 'sun' : (dayIdx === 6 ? 'sat' : '');
+            
+            // 공휴일 확인
+            const holidayName = getHolidayName(dStr);
+            // 공휴일이거나 일요일이면 빨간색(sun) 적용
+            const colorCls = (dayIdx === 0 || holidayName) ? 'sun' : (dayIdx === 6 ? 'sat' : '');
 
             const memos = JSON.parse(localStorage.getItem(`cal_todo_${dStr}`) || '[]');
             let memoHtml = '';
+            
+            // 공휴일 이름이 있다면 메모 리스트 최상단에 빨간색으로 표시
+            if (holidayName) {
+                memoHtml += `<div style="font-size: 0.75rem; color: var(--sun-color); font-weight: bold; margin-bottom: 2px;">${holidayName}</div>`;
+            }
+
             if (memos.length <= 3) {
-                memoHtml = memos.map(m => `<div class="cal-memo-item ${m.done ? 'done' : ''}">${m.text}</div>`).join('');
+                memoHtml += memos.map(m => `<div class="cal-memo-item ${m.done ? 'done' : ''}">${m.text}</div>`).join('');
             } else {
                 const visibleMemos = memos.slice(0, 2);
-                memoHtml = visibleMemos.map(m => `<div class="cal-memo-item ${m.done ? 'done' : ''}">${m.text}</div>`).join('');
+                memoHtml += visibleMemos.map(m => `<div class="cal-memo-item ${m.done ? 'done' : ''}">${m.text}</div>`).join('');
                 memoHtml += `<div class="cal-memo-item more">+${memos.length - 2}개 더보기</div>`;
             }
 
@@ -942,6 +1774,137 @@
         document.getElementById(containerId).innerHTML = html;
     }
 
+    // --- 설정 전용 JS 기능 로직 ---
+    function saveVindicUserCount() {
+        const input = document.getElementById('vindic-user-count-input');
+        let count = parseInt(input.value, 10);
+        if (isNaN(count) || count < 1) count = 1;
+        if (count > 6) count = 6;
+        
+        localStorage.setItem('vindic_user_count', count.toString());
+        checkMaTasks();
+        renderShadowCitadel();
+        alert(`캐릭터 수가 ${count}개로 저장되었습니다.`);
+    }
+
+    function saveWeatherSettings() {
+        const text = document.getElementById('weather-link-text-input').value.trim() || '암사동 날씨';
+        const query = document.getElementById('weather-search-query-input').value.trim() || '암사동 날씨';
+        
+        localStorage.setItem('weather_link_text', text);
+        localStorage.setItem('weather_search_query', query);
+        
+        updateWeatherLink();
+        alert('날씨 설정이 저장되었습니다.');
+    }
+
+    function updateWeatherLink() {
+        const text = localStorage.getItem('weather_link_text') || '암사동 날씨';
+        const query = localStorage.getItem('weather_search_query') || '암사동 날씨';
+        
+        const weatherElem = document.getElementById('weather-link');
+        if (weatherElem) {
+            weatherElem.innerHTML = `☀️ <span class="link-text-wrap"><span class="link-text">${text}</span></span>`;
+            weatherElem.href = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`;
+        }
+        
+        const textInput = document.getElementById('weather-link-text-input');
+        const queryInput = document.getElementById('weather-search-query-input');
+        if (textInput && queryInput) {
+            textInput.value = text;
+            queryInput.value = query;
+        }
+    }
+
+    function saveAirSettings() {
+        const text = document.getElementById('air-link-text-input').value.trim() || '대기환경정보';
+        let url = document.getElementById('air-link-url-input').value.trim() || 'https://cleanair.seoul.go.kr/?area=111274&type=pm25';
+        if (!url.includes('://')) url = 'https://' + url;
+
+        localStorage.setItem('air_link_text', text);
+        localStorage.setItem('air_link_url', url);
+
+        updateAirLink();
+        alert('대기환경정보 설정이 저장되었습니다.');
+    }
+
+    function updateAirLink() {
+        const text = localStorage.getItem('air_link_text') || '대기환경정보';
+        const url = localStorage.getItem('air_link_url') || 'https://cleanair.seoul.go.kr/?area=111274&type=pm25';
+
+        const airLink = document.getElementById('air-link');
+        if (airLink) {
+            airLink.href = url;
+            airLink.innerHTML = `<img src="https://www.google.com/s2/favicons?domain=cleanair.seoul.go.kr"><span class="link-text-wrap"><span class="link-text" id="air-link-text">${text}</span></span>`;
+        }
+
+        const textInput = document.getElementById('air-link-text-input');
+        const urlInput = document.getElementById('air-link-url-input');
+        if (textInput && urlInput) {
+            textInput.value = text;
+            urlInput.value = url;
+        }
+    }
+
+    function exportBackup() {
+        const data = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            data[key] = localStorage.getItem(key);
+        }
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const todayStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `startpage_backup_${todayStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (typeof data !== 'object' || data === null) {
+                    alert('올바르지 않은 백업 파일 형식입니다.');
+                    return;
+                }
+                if (confirm('현재 저장된 모든 데이터가 백업 파일의 데이터로 대체됩니다. 복원하시겠습니까?')) {
+                    localStorage.clear();
+                    for (const key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            localStorage.setItem(key, data[key]);
+                        }
+                    }
+                    alert('복원이 완료되었습니다. 페이지를 새로고침합니다.');
+                    location.reload();
+                }
+            } catch (err) {
+                alert('백업 파일을 읽는 도중 오류가 발생했습니다: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    function initSettingsUI() {
+        const count = getMaxCheckboxes();
+        const countInput = document.getElementById('vindic-user-count-input');
+        if (countInput) countInput.value = count;
+        
+        updateWeatherLink();
+        updateAirLink();
+        renderAllBlockLinks();
+    }
+
     window.onload = () => {
         const savedTheme = localStorage.getItem('dashboard-theme') || 'light';
         document.body.setAttribute('data-theme', savedTheme);
@@ -959,7 +1922,17 @@
         }
 
         updateClock(); setInterval(updateClock, 1000);
-        checkMaTasks(); renderQueue(); renderCustomLinks();
+        
+        // 설정 및 링크 초기화
+        initSettingsUI();
+        setupMarqueeEffect(); // 마우스 호버 이동 효과 적용
+        checkMaTasks(); 
+        renderQueue(); 
+        renderQueue2(); 
+        renderQueue3();
+        renderCustomLinks();
+        renderCustomLinks2();
+        renderCustomLinks3();
 
         const memoArea = document.getElementById('main-memo');
         const memoStatus = document.getElementById('memo-status');
