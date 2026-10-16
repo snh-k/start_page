@@ -644,7 +644,8 @@
                     <strong>C6</strong>:15000 | <strong>C5</strong>:16000 | <strong>C4</strong>:17000 | <strong>C3</strong>:18000 | <strong>C2</strong>:19000 | <strong>C1</strong>:20000<br>
                     <strong>B6</strong>:25000 | <strong>B5</strong>:30000 | <strong>B4</strong>:35000 | <strong>B3</strong>:40000 | <strong>B2</strong>:45000 | <strong>B1</strong>:50000 &emsp;&emsp;&emsp; 
                     <strong>A6</strong>:55000 | <strong>A5</strong>:60000 | <strong>A4</strong>:65000 | <strong>A3</strong>:70000 | <strong>A2</strong>:75000 | <strong>A1</strong>:80000 &emsp;&emsp;&emsp; 
-                    <strong>S6</strong>:100000 | <strong>S5</strong>:120000 | <strong>S4</strong>:145000 | <strong>S3</strong>:175000 | <strong>S2</strong>:210000 | <strong>S1</strong>:250000
+                    <strong>S6</strong>:100000 | <strong>S5</strong>:120000 | <strong>S4</strong>:145000 | <strong>S3</strong>:175000 | <strong>S2</strong>:210000 | <strong>S1</strong>:250000<br>
+                    <strong>RS6</strong>:280000 | <strong>RS5</strong>:320000 | <strong>RS4</strong>:360000 | <strong>RS3</strong>:400000 | <strong>RS2</strong>:450000 | <strong>RS1</strong>:500000
                 </div>
             </div>
 
@@ -1014,14 +1015,14 @@
 
         const maxCb = getMaxCheckboxes();
         const GRADES = [
-            'F', 
-            'C6', 'C5', 'C4', 'C3', 'C2', 'C1', 
-            'B6', 'B5', 'B4', 'B3', 'B2', 'B1', 
-            'A6', 'A5', 'A4', 'A3', 'A2', 'A1', 
-            'S6', 'S5', 'S4', 'S3', 'S2', 'S1'
+            'F',
+            'B6', 'B5', 'B4', 'B3', 'B2', 'B1',
+            'A6', 'A5', 'A4', 'A3', 'A2', 'A1',
+            'S6', 'S5', 'S4', 'S3', 'S2', 'S1',
+            'RS6', 'RS5', 'RS4', 'RS3', 'RS2', 'RS1'
         ];
 
-        const GROUP_STARTS = new Set(['C6', 'B6', 'A6', 'S6']);
+        const GROUP_STARTS = new Set(['B6', 'A6', 'S6', 'RS6']);
         const boundaryClass = grade => GROUP_STARTS.has(grade) ? ' citadel-boundary' : '';
         let savedGrades = JSON.parse(localStorage.getItem('citadel_char_grades') || '[]');
         let html = '<div class="citadel-grid">';
